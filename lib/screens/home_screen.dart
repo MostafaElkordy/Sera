@@ -68,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             final verticalGap = (maxH * 0.025).clamp(14.0, 28.0);
 
             return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
               child: Column(
                 children: [
                   // Top: Logo & Title - moved up
@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     height: logoSize,
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.red.withOpacity(0.08),
+                      color: Colors.red.withAlpha((0.08 * 255).round()),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -95,7 +95,18 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: 6),
+                  Text(
+                    "You'll Never Be Alone",
+                    style: TextStyle(
+                      fontSize: 15,
+                      color: Colors.grey[300],
+                      fontStyle: FontStyle.italic,
+                      letterSpacing: 0.5,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 4),
                   Text(
                     'مساعدك الذكي في حالات الطوارئ',
                     style: TextStyle(
@@ -105,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                   ),
 
                   // Spacer between header and action area (move buttons slightly down)
-                  SizedBox(height: (verticalGap * 1.2).clamp(10.0, 24.0)),
+                  SizedBox(height: verticalGap.clamp(6.0, 14.0)),
 
                   // Action buttons area - make scrollable when needed but keep SOS pinned
                   Expanded(
@@ -191,14 +202,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [color, color.withOpacity(0.78)],
+                colors: [color, color.withAlpha((0.78 * 255).round())],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(0.35),
+                  color: color.withAlpha((0.35 * 255).round()),
                   blurRadius: 12,
                   offset: const Offset(0, 6),
                 ),
@@ -209,7 +220,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.18),
+                    color: Colors.white.withAlpha((0.18 * 255).round()),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(icon, size: 32, color: Colors.white),
@@ -236,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                         ),
                         Text(
                           subtitle,
-                          style: TextStyle(fontSize: 13, color: Colors.white.withOpacity(0.92), height: 1.0),
+                          style: TextStyle(fontSize: 13, color: Colors.white.withAlpha((0.92 * 255).round()), height: 1.0),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.right,

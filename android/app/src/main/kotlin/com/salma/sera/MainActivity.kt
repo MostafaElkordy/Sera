@@ -1,4 +1,4 @@
-package com.example.sera_emergency
+package com.salma.sera
 
 import io.flutter.embedding.android.FlutterActivity
 

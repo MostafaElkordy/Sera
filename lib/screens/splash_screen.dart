@@ -48,8 +48,8 @@ class _SplashScreenState extends State<SplashScreen>
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              const Color(0xFF1FB8E6).withOpacity(0.95), // أزرق فيروزي هادئ
-              const Color(0xFF00D4FF).withOpacity(0.85), // أزرق سماوي فاتح
+              const Color(0xFF1FB8E6).withAlpha((0.95 * 255).round()), // أزرق فيروزي هادئ
+              const Color(0xFF00D4FF).withAlpha((0.85 * 255).round()), // أزرق سماوي فاتح
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -71,10 +71,10 @@ class _SplashScreenState extends State<SplashScreen>
                         height: 100,
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.15),
+                          color: Colors.white.withAlpha((0.15 * 255).round()),
                           shape: BoxShape.circle,
                           border: Border.all(
-                            color: Colors.white.withOpacity(0.3),
+                            color: Colors.white.withAlpha((0.3 * 255).round()),
                             width: 2,
                           ),
                         ),
@@ -106,7 +106,7 @@ class _SplashScreenState extends State<SplashScreen>
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontSize: 16,
-                            color: Colors.white.withOpacity(0.95),
+                            color: Colors.white.withAlpha((0.95 * 255).round()),
                             height: 1.6,
                           ),
                         ),
@@ -126,7 +126,7 @@ class _SplashScreenState extends State<SplashScreen>
                   'You Will Never Walk Alone',
                   style: TextStyle(
                     fontSize: 14,
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withAlpha((0.8 * 255).round()),
                     fontStyle: FontStyle.italic,
                     letterSpacing: 1,
                   ),
