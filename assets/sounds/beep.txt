@@ -1,0 +1,3 @@
+# Placeholder for beep.wav
+# Replace this with an actual WAV file
+# Use a simple beep sound (800Hz, 200ms)

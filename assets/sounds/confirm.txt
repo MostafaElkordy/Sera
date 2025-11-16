@@ -1,0 +1,3 @@
+# Placeholder for confirm.wav
+# Replace this with an actual WAV file
+# Use a pleasant double beep or ascending tone (500ms)
