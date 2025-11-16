@@ -1,6 +1,6 @@
 {
-    "name": "sera_emergency",
-    "short_name": "sera_emergency",
+    "name": "sera",
+    "short_name": "sera",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -36,7 +36,7 @@ class FirstAidDetailScreen extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       caseData.color,
-                      caseData.color.withOpacity(0.7),
+                      caseData.color.withAlpha((0.7 * 255).round()),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
@@ -84,8 +84,8 @@ class FirstAidDetailScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: const Color(0xFF374151),
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(
-                    color: Colors.blue.withOpacity(0.3),
+                    border: Border.all(
+                    color: Colors.blue.withAlpha((0.3 * 255).round()),
                     width: 2,
                   ),
                 ),
@@ -108,7 +108,7 @@ class FirstAidDetailScreen extends StatelessWidget {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.blue.withOpacity(0.5),
+                            color: Colors.blue.withAlpha((0.5 * 255).round()),
                             blurRadius: 20,
                             spreadRadius: 2,
                           ),
@@ -158,11 +158,11 @@ class _StepCard extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+        decoration: BoxDecoration(
         color: const Color(0xFF374151),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withAlpha((0.3 * 255).round()),
           width: 1,
         ),
       ),

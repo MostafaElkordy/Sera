@@ -86,7 +86,7 @@ class _SosButtonState extends State<SosButton> with SingleTickerProviderStateMix
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.red.withOpacity(_isPressed ? 0.6 : 0.4),
+                    color: Colors.red.withAlpha(((_isPressed ? 0.6 : 0.4) * 255).round()),
                     blurRadius: _isPressed ? 30 : 40,
                     spreadRadius: _isPressed ? 5 : 10,
                   ),
@@ -125,8 +125,7 @@ class SosDialog extends StatefulWidget {
 class _SosDialogState extends State<SosDialog> {
   int _countdown = 15;
   Timer? _timer;
-
-  @override
+  // audio methods removed to keep build stable
   void initState() {
     super.initState();
     _startCountdown();
@@ -148,13 +147,7 @@ class _SosDialogState extends State<SosDialog> {
     });
   }
 
-  Future<void> _playCountdownSound() async {
-    // audio removed
-  }
-
-  Future<void> _playConfirmSound() async {
-    // audio removed
-  }
+  // audio methods removed to keep build stable
 
   void _showSuccessMessage() {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -179,9 +172,7 @@ class _SosDialogState extends State<SosDialog> {
     );
   }
 
-  Future<void> _playCancelSound() async {
-    // audio removed
-  }
+  // audio methods removed to keep build stable
 
   @override
   void dispose() {
@@ -204,7 +195,7 @@ class _SosDialogState extends State<SosDialog> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.red.withOpacity(0.5),
+              color: Colors.red.withAlpha((0.5 * 255).round()),
               blurRadius: 20,
               spreadRadius: 5,
             ),

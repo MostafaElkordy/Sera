@@ -36,7 +36,7 @@ class DisasterDetailScreen extends StatelessWidget {
                   gradient: LinearGradient(
                     colors: [
                       disasterData.color,
-                      disasterData.color.withOpacity(0.7),
+                      disasterData.color.withAlpha((0.7 * 255).round()),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(16),
@@ -89,7 +89,7 @@ class DisasterDetailScreen extends StatelessWidget {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.teal.withOpacity(0.4),
+                      color: Colors.teal.withAlpha((0.4 * 255).round()),
                       blurRadius: 12,
                       offset: const Offset(0, 6),
                     ),
@@ -157,11 +157,11 @@ class _DisasterStepCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
+        decoration: BoxDecoration(
         color: const Color(0xFF374151),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: color.withOpacity(0.3),
+          color: color.withAlpha((0.3 * 255).round()),
           width: 1,
         ),
       ),
@@ -170,8 +170,8 @@ class _DisasterStepCard extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.2),
+              decoration: BoxDecoration(
+              color: color.withAlpha((0.2 * 255).round()),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(

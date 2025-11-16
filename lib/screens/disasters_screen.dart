@@ -93,7 +93,7 @@ class _DisasterCardState extends State<_DisasterCard> with SingleTickerProviderS
                 borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: widget.disaster.color.withOpacity(0.3),
+                    color: widget.disaster.color.withAlpha((0.3 * 255).round()),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -107,7 +107,7 @@ class _DisasterCardState extends State<_DisasterCard> with SingleTickerProviderS
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: widget.disaster.color.withOpacity(0.2),
+                        color: widget.disaster.color.withAlpha((0.2 * 255).round()),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
