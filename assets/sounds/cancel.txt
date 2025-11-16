@@ -1,0 +1,3 @@
+# Placeholder for cancel.wav
+# Replace this with an actual WAV file
+# Use a gentle single beep or descending tone (400ms)
