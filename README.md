@@ -26,19 +26,19 @@ SERA is designed specifically to close this gap.
 
 ## ✨ Key Features
 
-### 🩺 1. Interactive First Aid Assistant
+### 🩺 Interactive First Aid Assistant
 - Step-by-step protocols for common emergencies:
   - choking, drowning, bleeding, CPR, seizures, fractures, injuries, and more.
 - Delivered through **audio + visual guidance** to reduce panic and cognitive load.
 - Simple, clean UI with clear icons and minimal steps to reach critical information quickly.
 
-### 👁️ 2. Real-Time Risk Assessment (Computer Vision)
+### 👁️ Real-Time Risk Assessment (Computer Vision)
 - Uses the phone camera to **understand the surrounding environment**.
 - Detects visual risk indicators such as:
   - smoke, flames, blocked exits, dangerous obstacles, elevators in use during fire, etc.
 - Provides **context-aware survival guidance** based on what it “sees” in real time.
 
-### 📱 3. Smart SOS System (Sensor Fusion)
+### 📱 Smart SOS System (Sensor Fusion)
 - Uses built-in smartphone sensors:
   - accelerometer, gyroscope, motion & impact detection.
 - Automatically detects high-impact events such as:
@@ -48,7 +48,7 @@ SERA is designed specifically to close this gap.
   - location data  
   - optional basic incident information.
 
-### 🧠 4. AI-Driven Intelligence
+### 🧠 AI-Driven Intelligence
 - Natural language understanding for voice commands and questions.
 - Audio & image analysis to select the most suitable first-aid protocol in real time.
 - Designed to minimize false alarms while still reacting quickly to real danger.
@@ -59,7 +59,7 @@ SERA is designed specifically to close this gap.
 
 SERA is built on top of:
 
-- **Medical & first-aid standards**  
+- **Medical & first-aid standards**
   - AHA: First Aid, CPR, and AED guidelines  
   - IFRC protocols  
   - WHO emergency guidance  
@@ -70,7 +70,7 @@ SERA is built on top of:
   - **Dart** for app logic
   - **Kotlin / Android native** where low-level sensor access and performance are critical
   - **TensorFlow Lite / TensorFlow Hub** for on-device AI & computer vision
-  - **OpenCV** concepts for image and video processing
+  - Concepts from **OpenCV** for image and video processing
   - **GitHub** for version control, open-source model integration, and project documentation
 
 ---
@@ -79,9 +79,9 @@ SERA is built on top of:
 
 - **Framework:** Flutter  
 - **Languages:** Dart, Kotlin (for native Android sensor integration)  
-- **AI & Vision:** TensorFlow Lite, TensorFlow Hub (future: on-device CV models)  
-- **State Management:** *(to be updated: Provider / Riverpod / Bloc / etc.)*  
-- **Platforms:** Android (primary), iOS, Web, Desktop (planned)  
+- **AI & Vision:** TensorFlow Lite, TensorFlow Hub (future on-device CV models)  
+- **State Management:** _TBD (Provider / Riverpod / Bloc / etc.)_  
+- **Platforms:** Android (primary), with future support for iOS, Web, and Desktop  
 
 ---
 
@@ -99,3 +99,105 @@ SERA is built on top of:
 ```bash
 git clone https://github.com/MostafaElkordy/Sera.git
 cd Sera
+```
+
+### Install dependencies
+
+```bash
+flutter pub get
+```
+
+### Run the app
+
+```bash
+# Run on the default connected device
+flutter run
+
+# Or list devices
+flutter devices
+
+# Then run on a chosen device
+flutter run -d <device_id>
+```
+
+---
+
+## 📂 Project Structure (high level)
+
+```text
+lib/
+  screens/
+    home_screen.dart
+    splash_screen.dart
+    disasters_screen.dart
+    disaster_detail_screen.dart
+    first_aid_screen.dart
+    first_aid_detail_screen.dart
+  widgets/
+    sos_button.dart
+  ...
+assets/
+  sounds/
+docs/
+  md/
+android/
+ios/
+linux/
+macos/
+web/
+windows/
+...
+```
+
+*(Update this section as the project evolves.)*
+
+---
+
+## 🧭 Roadmap & Future Plans
+
+SERA is designed as a **long-term safety platform**, not just a one-off app.  
+Planned directions include:
+
+- [ ] Add localization (Arabic / English)
+- [ ] Add full offline support for all guides
+- [ ] Integrate advanced crash & fall detection using sensor fusion
+- [ ] Implement camera-based risk detection (smoke, fire, blocked exits, etc.)
+- [ ] Integrate with wearables (heart rate, SpO₂, ECG) for early risk prediction
+- [ ] Smart home & car system integration
+- [ ] AR-based evacuation and CPR guidance
+- [ ] Build a volunteer & responder network layer
+- [ ] Publish beta version on Google Play
+
+---
+
+## 🤝 Contributing
+
+Contributions, ideas, and feedback are welcome!
+
+1. Fork the repository.
+2. Create your feature branch:  
+   `git checkout -b feature/my-feature-name`
+3. Commit your changes:  
+   `git commit -m "Add my feature"`
+4. Push to the branch:  
+   `git push origin feature/my-feature-name`
+5. Open a Pull Request.
+
+---
+
+## 📜 License
+
+License: **To be decided.**  
+Once the license is chosen (e.g. MIT, Apache-2.0, or proprietary), a `LICENSE` file will be added and this section will be updated.
+
+---
+
+## 📬 Contact
+
+**Author:** Mostafa Elkordy  
+**Email:** [elkordyonline@gmail.com](mailto:elkordyonline@gmail.com)  
+**GitHub:** [@MostafaElkordy](https://github.com/MostafaElkordy)
+
+---
+
+> _“SERA aims to transform every smartphone into an intelligent, proactive safety companion – closing the critical time gap, protecting lives, and empowering people to act when seconds matter most.”_
