@@ -1,264 +1,309 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/navigation_provider.dart';
 import '../widgets/sos_button.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateMixin {
-  late AnimationController _toggleController;
-  // toggle controller used for text toggle previously. Remove unused animation.
-  bool _showSOS = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _toggleController = AnimationController(
-      duration: const Duration(milliseconds: 800),
-      vsync: this,
-    );
-
-    // no fade animation needed now; keep toggle controller if needed later
-
-    // Toggle every 4 seconds
-    Future.delayed(const Duration(seconds: 2), _toggleText);
-  }
-
-  void _toggleText() {
-    if (mounted) {
-      _toggleController.forward().then((_) {
-        setState(() {
-          _showSOS = !_showSOS;
-        });
-        _toggleController.reverse();
-      });
-      Future.delayed(const Duration(seconds: 4), _toggleText);
-    }
-  }
-
-  @override
-  void dispose() {
-    _toggleController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     final navProvider = Provider.of<NavigationProvider>(context, listen: false);
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
+    // --- Modern Dashboard Layout ---
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: const Color(0xFF1F2937),
-        automaticallyImplyLeading: false,
-      ),
+      backgroundColor: theme.scaffoldBackgroundColor,
+      // Using CustomScrollView for sticky headers and scrollable content
       body: SafeArea(
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final maxH = constraints.maxHeight;
-            // Responsive sizes (narrower clamps to avoid overflow on short screens)
-            final logoSize = (maxH * 0.11).clamp(44.0, 84.0);
-            // increase main button height by ~15% and spacing a bit
-            final buttonHeight = (maxH * 0.1495).clamp(80.0, 126.0);
-            final verticalGap = (maxH * 0.025).clamp(14.0, 28.0);
-
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-              child: Column(
+        child: Column(
+          children: [
+            // 1. Top Bar (Status & Profile)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Top: Logo & Title - moved up
-                  Container(
-                    width: logoSize,
-                    height: logoSize,
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.red.withAlpha((0.08 * 255).round()),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.favorite,
-                      size: logoSize * 0.6,
-                      color: Colors.red,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    'SERA',
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    "You'll Never Be Alone",
-                    style: TextStyle(
-                      fontSize: 15,
-                      color: Colors.grey[300],
-                      fontStyle: FontStyle.italic,
-                      letterSpacing: 0.5,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'مساعدك الذكي في حالات الطوارئ',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[400],
-                    ),
-                  ),
-
-                  // Spacer between header and action area (move buttons slightly down)
-                  SizedBox(height: verticalGap.clamp(6.0, 14.0)),
-
-                  // Action buttons area - make scrollable when needed but keep SOS pinned
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.start,
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
-                          _buildMainButton(
-                            context: context,
-                            title: 'الإسعافات الأولية',
-                            subtitle: 'إرشادات فورية لحالات حرجة',
-                            icon: Icons.medical_services,
-                            color: Colors.blue,
-                            height: buttonHeight,
-                            onTap: () {
-                              navProvider.navigateTo(NavigationPage.firstAid);
-                            },
-                          ),
-
-                          SizedBox(height: verticalGap),
-
-                          _buildMainButton(
-                            context: context,
-                            title: 'التعامل مع الكوارث',
-                            subtitle: 'دليلك للنجاة في الأزمات',
-                            icon: Icons.warning_amber,
-                            color: Colors.orange,
-                            height: buttonHeight,
-                            onTap: () {
-                              navProvider.navigateTo(NavigationPage.disasters);
-                            },
-                          ),
+                          Text('SERA مرحباً بك،',
+                              style: TextStyle(
+                                  color: theme.textTheme.bodySmall?.color,
+                                  fontSize: 14)),
+                          const SizedBox(width: 6),
+                          const Icon(Icons.favorite,
+                              color: Colors.red, size: 16),
                         ],
                       ),
-                    ),
-                  ),
-
-                  // SOS always visible at bottom
-                  SafeArea(
-                    top: false,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const SizedBox(height: 16),
-                        const Center(child: SosButton()),
-                        const SizedBox(height: 8),
-                        Text(
-                          'اضغط مطولاً لتفعيل الاستغاثة الذكي',
+                      const SizedBox(height: 4),
+                      Text('مساعدك الذكي في حالات الطوارئ',
                           style: TextStyle(
-                            fontSize: 12.6,
-                            color: Colors.grey[500],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        SizedBox(height: verticalGap.clamp(6.0, 20.0)),
-                      ],
-                    ),
+                              color: theme.textTheme.bodyLarge?.color,
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold)),
+                    ],
                   ),
+                  // Top Actions
+                  Row(
+                    children: [
+                      _buildCircleBtn(
+                        icon: Icons.power_settings_new,
+                        onTap: () => SystemNavigator.pop(),
+                        theme: theme,
+                        color: Colors.redAccent,
+                      ),
+                      const SizedBox(width: 8),
+                      _buildCircleBtn(
+                        icon: Icons.person,
+                        onTap: () =>
+                            navProvider.navigateTo(NavigationPage.profile),
+                        theme: theme,
+                      ),
+                    ],
+                  )
                 ],
               ),
-            );
-          },
+            ),
+
+            const SizedBox(height: 24),
+
+            // 2. Main Content Area
+            Expanded(
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withValues(alpha: 0.03)
+                      : Colors.grey.withValues(alpha: 0.08),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                ),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+
+                    // --- Services Grid ---
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildServiceCard(
+                            context,
+                            title: 'الإسعافات الأولية',
+                            subtitle: 'إرشادات فورية لحالات حرجة',
+                            icon: Icons.medical_services_outlined,
+                            color: Colors.blueAccent,
+                            onTap: () =>
+                                navProvider.navigateTo(NavigationPage.firstAid),
+                            theme: theme,
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildServiceCard(
+                            context,
+                            title: 'الكوارث والآزمات',
+                            subtitle: 'دليل النجاة الذكي',
+                            icon: Icons.warning_amber_rounded,
+                            color: Colors.orangeAccent,
+                            onTap: () => navProvider
+                                .navigateTo(NavigationPage.disasters),
+                            theme: theme,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // --- History / Logs Card ---
+                    _buildWideCard(
+                      context,
+                      title: 'سجل الطوارئ',
+                      icon: Icons.history,
+                      onTap: () =>
+                          navProvider.navigateTo(NavigationPage.history),
+                      theme: theme,
+                    ),
+                    const SizedBox(height: 12),
+                    // --- Settings Card ---
+                    _buildWideCard(
+                      context,
+                      title: 'الإعدادات العامة',
+                      icon: Icons.settings,
+                      onTap: () =>
+                          navProvider.navigateTo(NavigationPage.settings),
+                      theme: theme,
+                    ),
+
+                    const Spacer(),
+
+                    // 3. SOS Button Area (Hero Section)
+                    Column(
+                      children: [
+                        const SosButton(),
+                        const SizedBox(height: 12),
+                        Text(
+                          'اضغط مطولاً لتفعيل نداء الاستغاثة',
+                          style: TextStyle(
+                            color: theme.textTheme.bodySmall?.color
+                                ?.withValues(alpha: 0.6),
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 30),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  Widget _buildMainButton({
-    required BuildContext context,
+  // --- Helper Widgets ---
+
+  Widget _buildCircleBtn({
+    required IconData icon,
+    required VoidCallback onTap,
+    required ThemeData theme,
+    Color? color,
+  }) {
+    final effectiveColor = color ?? theme.colorScheme.primary;
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(50),
+      child: Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: effectiveColor.withValues(alpha: 0.1),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, color: effectiveColor, size: 22),
+      ),
+    );
+  }
+
+  Widget _buildServiceCard(
+    BuildContext context, {
     required String title,
     required String subtitle,
     required IconData icon,
     required Color color,
-    required double height,
     required VoidCallback onTap,
+    required ThemeData theme,
   }) {
-    return SizedBox(
-      width: double.infinity,
-      height: height,
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-            padding: const EdgeInsets.all(14),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [color, color.withAlpha((0.78 * 255).round())],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: 140,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          // Gradient Background
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              color.withValues(alpha: 0.15),
+              color.withValues(alpha: 0.05),
+            ],
+          ),
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: color.withValues(alpha: 0.2)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
               ),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: color.withAlpha((0.35 * 255).round()),
-                  blurRadius: 12,
-                  offset: const Offset(0, 6),
-                ),
-              ],
+              child: Icon(icon, size: 32, color: color),
             ),
-            child: Row(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withAlpha((0.18 * 255).round()),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(icon, size: 32, color: Colors.white),
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Align(
-                    alignment: Alignment.centerRight,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          title,
-                          style: TextStyle(
-                            fontSize: 19,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            height: 1.0,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.right,
-                        ),
-                        Text(
-                          subtitle,
-                          style: TextStyle(fontSize: 13, color: Colors.white.withAlpha((0.92 * 255).round()), height: 1.0),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.right,
-                        ),
-                      ],
-                    ),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
-                const Icon(Icons.arrow_back_ios, color: Colors.white70, size: 18),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 11, // Smaller subtitle to fit
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ),
               ],
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWideCard(
+    BuildContext context, {
+    required String title,
+    required IconData icon,
+    required VoidCallback onTap,
+    required ThemeData theme,
+  }) {
+    final shape = theme.cardTheme.shape;
+    final border =
+        (shape is RoundedRectangleBorder && shape.side != BorderSide.none)
+            ? Border.fromBorderSide(shape.side)
+            : null;
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: theme.cardTheme.color,
+          borderRadius: BorderRadius.circular(16),
+          border: border,
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.secondary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(icon, color: theme.colorScheme.secondary, size: 20),
+            ),
+            const SizedBox(width: 16),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
+              ),
+            ),
+            const Spacer(),
+            Icon(Icons.arrow_forward_ios, size: 14, color: theme.disabledColor),
+          ],
         ),
       ),
     );

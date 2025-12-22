@@ -1,0 +1,244 @@
+Launching lib\main.dart on SM J730F in debug mode...
+Running Gradle task 'assembleDebug'...                             78.0s
+ظêأ Built build\app\outputs\flutter-apk\app-debug.apk
+Installing build\app\outputs\flutter-apk\app-debug.apk...          16.3s
+D/FlutterJNI(16646): Beginning load of flutter...
+D/FlutterJNI(16646): flutter (null) was loaded normally!
+Syncing files to device SM J730F...                                568ms
+
+Flutter run key commands.
+r Hot reload. 
+R Hot restart.
+h List all available interactive commands.
+d Detach (terminate "flutter run" but leave application running).
+c Clear the screen
+q Quit (terminate the application on the device).
+
+A Dart VM Service on SM J730F is available at: http://127.0.0.1:53915/B_VBvJy8dLE=/
+I/Choreographer(16646): Skipped 428 frames!  The application may be doing too much work on its main thread.
+The Flutter DevTools debugger and profiler on SM J730F is available at: http://127.0.0.1:9101?uri=http://127.0.0.1:53915/B_VBvJy8dLE=/
+I/com.salma.sera(16646): Rejecting re-init on previously-failed class java.lang.Class<androidx.window.layout.adapter.sidecar.DistinctElementSidecarCallback>: java.lang.NoClassDefFoundError: Failed resolution of: Landroidx/window/sidecar/SidecarInterface$SidecarCallback;
+I/com.salma.sera(16646):   at androidx.window.layout.adapter.sidecar.ExtensionInterfaceCompat androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.initAndVerifyExtension(android.content.Context) (SidecarWindowBackend.kt:207)
+I/com.salma.sera(16646):   at androidx.window.layout.adapter.sidecar.SidecarWindowBackend androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.getInstance(android.content.Context) (SidecarWindowBackend.kt:191)
+I/com.salma.sera(16646):   at androidx.window.layout.WindowInfoTracker androidx.window.layout.WindowInfoTracker$Companion.getOrCreate(android.content.Context) (WindowInfoTracker.kt:135)
+I/com.salma.sera(16646):   at io.flutter.embedding.android.WindowInfoRepositoryCallbackAdapterWrapper io.flutter.embedding.android.FlutterView.createWindowInfoRepo() (FlutterView.java:489)
+I/com.salma.sera(16646):   at void io.flutter.embedding.android.FlutterView.onAttachedToWindow() (FlutterView.java:510)
+I/com.salma.sera(16646):   at void android.view.View.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (View.java:20010)
+I/com.salma.sera(16646):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3589)
+I/com.salma.sera(16646):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3596)
+I/chatty  (16646): uid=10228(com.salma.sera) identical 1 line
+I/com.salma.sera(16646):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3596)
+I/com.salma.sera(16646):   at void android.view.ViewRootImpl.performTraversals() (ViewRootImpl.java:2274)
+I/com.salma.sera(16646):   at void android.view.ViewRootImpl.doTraversal() (ViewRootImpl.java:1939)
+I/com.salma.sera(16646):   at void android.view.ViewRootImpl$TraversalRunnable.run() (ViewRootImpl.java:8592)
+I/com.salma.sera(16646):   at void android.view.Choreographer$CallbackRecord.run(long) (Choreographer.java:988)
+I/com.salma.sera(16646):   at void android.view.Choreographer.doCallbacks(int, long) (Choreographer.java:765)
+I/com.salma.sera(16646):   at void android.view.Choreographer.doFrame(long, int) (Choreographer.java:700)
+I/com.salma.sera(16646):   at void android.view.Choreographer$FrameDisplayEventReceiver.run() (Choreographer.java:967)
+I/com.salma.sera(16646):   at void android.os.Handler.handleCallback(android.os.Message) (Handler.java:873)
+I/com.salma.sera(16646):   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:99)
+I/com.salma.sera(16646):   at void android.os.Looper.loop() (Looper.java:214)
+I/com.salma.sera(16646):   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:7156)
+I/com.salma.sera(16646):   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+I/com.salma.sera(16646):   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:494)
+I/com.salma.sera(16646):   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:975)
+I/com.salma.sera(16646): Caused by: java.lang.ClassNotFoundException: Didn't find class "androidx.window.sidecar.SidecarInterface$SidecarCallback" on path: DexPathList[[zip file "/data/app/com.salma.sera-ODeRA6CBhOeUE8Fmd8EjdA==/base.apk"],nativeLibraryDirectories=[/data/app/com.salma.sera-ODeRA6CBhOeUE8Fmd8EjdA==/lib/arm, /data/app/com.salma.sera-ODeRA6CBhOeUE8Fmd8EjdA==/base.apk!/lib/armeabi-v7a, /system/lib, /system/vendor/lib]]
+I/com.salma.sera(16646):   at java.lang.Class dalvik.system.BaseDexClassLoader.findClass(java.lang.String) (BaseDexClassLoader.java:134)
+I/com.salma.sera(16646):   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String, boolean) (ClassLoader.java:379)
+I/com.salma.sera(16646):   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String) (ClassLoader.java:312)
+I/com.salma.sera(16646):   at androidx.window.layout.adapter.sidecar.ExtensionInterfaceCompat androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.initAndVerifyExtension(android.content.Context) (SidecarWindowBackend.kt:207)
+I/com.salma.sera(16646):   at androidx.window.layout.adapter.sidecar.SidecarWindowBackend androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.getInstance(android.content.Context) (SidecarWindowBackend.kt:191)
+I/com.salma.sera(16646):   at androidx.window.layout.WindowInfoTracker androidx.window.layout.WindowInfoTracker$Companion.getOrCreate(android.content.Context) (WindowInfoTracker.kt:135)
+I/com.salma.sera(16646):   at io.flutter.embedding.android.WindowInfoRepositoryCallbackAdapterWrapper io.flutter.embedding.android.FlutterView.createWindowInfoRepo() (FlutterView.java:489)
+I/com.salma.sera(16646):   at void io.flutter.embedding.android.FlutterView.onAttachedToWindow() (FlutterView.java:510)
+I/com.salma.sera(16646):   at void android.view.View.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (View.java:20010)
+I/com.salma.sera(16646):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3589)
+I/com.salma.sera(16646):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3596)
+I/chatty  (16646): uid=10228(com.salma.sera) identical 1 line
+I/com.salma.sera(16646):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3596)
+I/com.salma.sera(16646):   at void android.view.ViewRootImpl.performTraversals() (ViewRootImpl.java:2274)
+I/com.salma.sera(16646):   at void android.view.ViewRootImpl.doTraversal() (ViewRootImpl.java:1939)
+I/com.salma.sera(16646):   at void android.view.ViewRootImpl$TraversalRunnable.run() (ViewRootImpl.java:8592)
+I/com.salma.sera(16646):   at void android.view.Choreographer$CallbackRecord.run(long) (Choreographer.java:988)
+I/com.salma.sera(16646):   at void android.view.Choreographer.doCallbacks(int, long) (Choreographer.java:765)
+I/com.salma.sera(16646):   at void android.view.Choreographer.doFrame(long, int) (Choreographer.java:700)
+I/com.salma.sera(16646):   at void android.view.Choreographer$FrameDisplayEventReceiver.run() (Choreographer.java:967)
+I/com.salma.sera(16646):   at void android.os.Handler.handleCallback(android.os.Message) (Handler.java:873)
+I/com.salma.sera(16646):   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:99)
+I/com.salma.sera(16646):   at void android.os.Looper.loop() (Looper.java:214)
+I/com.salma.sera(16646):   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:7156)
+I/com.salma.sera(16646):   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+I/com.salma.sera(16646):   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:494)
+I/com.salma.sera(16646):   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:975)
+I/com.salma.sera(16646): 
+I/com.salma.sera(16646): Rejecting re-init on previously-failed class java.lang.Class<androidx.window.layout.adapter.sidecar.DistinctElementSidecarCallback>: java.lang.NoClassDefFoundError: Failed resolution of: Landroidx/window/sidecar/SidecarInterface$SidecarCallback;
+I/com.salma.sera(16646):   at androidx.window.layout.adapter.sidecar.ExtensionInterfaceCompat androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.initAndVerifyExtension(android.content.Context) (SidecarWindowBackend.kt:207)
+I/com.salma.sera(16646):   at androidx.window.layout.adapter.sidecar.SidecarWindowBackend androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.getInstance(android.content.Context) (SidecarWindowBackend.kt:191)
+I/com.salma.sera(16646):   at androidx.window.layout.WindowInfoTracker androidx.window.layout.WindowInfoTracker$Companion.getOrCreate(android.content.Context) (WindowInfoTracker.kt:135)
+I/com.salma.sera(16646):   at io.flutter.embedding.android.WindowInfoRepositoryCallbackAdapterWrapper io.flutter.embedding.android.FlutterView.createWindowInfoRepo() (FlutterView.java:489)
+I/com.salma.sera(16646):   at void io.flutter.embedding.android.FlutterView.onAttachedToWindow() (FlutterView.java:510)
+I/com.salma.sera(16646):   at void android.view.View.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (View.java:20010)
+I/com.salma.sera(16646):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3589)
+I/com.salma.sera(16646):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3596)
+I/chatty  (16646): uid=10228(com.salma.sera) identical 1 line
+I/com.salma.sera(16646):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3596)
+I/com.salma.sera(16646):   at void android.view.ViewRootImpl.performTraversals() (ViewRootImpl.java:2274)
+I/com.salma.sera(16646):   at void android.view.ViewRootImpl.doTraversal() (ViewRootImpl.java:1939)
+I/com.salma.sera(16646):   at void android.view.ViewRootImpl$TraversalRunnable.run() (ViewRootImpl.java:8592)
+I/com.salma.sera(16646):   at void android.view.Choreographer$CallbackRecord.run(long) (Choreographer.java:988)
+I/com.salma.sera(16646):   at void android.view.Choreographer.doCallbacks(int, long) (Choreographer.java:765)
+I/com.salma.sera(16646):   at void android.view.Choreographer.doFrame(long, int) (Choreographer.java:700)
+I/com.salma.sera(16646):   at void android.view.Choreographer$FrameDisplayEventReceiver.run() (Choreographer.java:967)
+I/com.salma.sera(16646):   at void android.os.Handler.handleCallback(android.os.Message) (Handler.java:873)
+I/com.salma.sera(16646):   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:99)
+I/com.salma.sera(16646):   at void android.os.Looper.loop() (Looper.java:214)
+I/com.salma.sera(16646):   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:7156)
+I/com.salma.sera(16646):   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+I/com.salma.sera(16646):   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:494)
+I/com.salma.sera(16646):   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:975)
+I/com.salma.sera(16646): Caused by: java.lang.ClassNotFoundException: Didn't find class "androidx.window.sidecar.SidecarInterface$SidecarCallback" on path: DexPathList[[zip file "/data/app/com.salma.sera-ODeRA6CBhOeUE8Fmd8EjdA==/base.apk"],nativeLibraryDirectories=[/data/app/com.salma.sera-ODeRA6CBhOeUE8Fmd8EjdA==/lib/arm, /data/app/com.salma.sera-ODeRA6CBhOeUE8Fmd8EjdA==/base.apk!/lib/armeabi-v7a, /system/lib, /system/vendor/lib]]
+I/com.salma.sera(16646):   at java.lang.Class dalvik.system.BaseDexClassLoader.findClass(java.lang.String) (BaseDexClassLoader.java:134)
+I/com.salma.sera(16646):   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String, boolean) (ClassLoader.java:379)
+I/com.salma.sera(16646):   at java.lang.Class java.lang.ClassLoader.loadClass(java.lang.String) (ClassLoader.java:312)
+I/com.salma.sera(16646):   at androidx.window.layout.adapter.sidecar.ExtensionInterfaceCompat androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.initAndVerifyExtension(android.content.Context) (SidecarWindowBackend.kt:207)
+I/com.salma.sera(16646):   at androidx.window.layout.adapter.sidecar.SidecarWindowBackend androidx.window.layout.adapter.sidecar.SidecarWindowBackend$Companion.getInstance(android.content.Context) (SidecarWindowBackend.kt:191)
+I/com.salma.sera(16646):   at androidx.window.layout.WindowInfoTracker androidx.window.layout.WindowInfoTracker$Companion.getOrCreate(android.content.Context) (WindowInfoTracker.kt:135)
+I/com.salma.sera(16646):   at io.flutter.embedding.android.WindowInfoRepositoryCallbackAdapterWrapper io.flutter.embedding.android.FlutterView.createWindowInfoRepo() (FlutterView.java:489)
+I/com.salma.sera(16646):   at void io.flutter.embedding.android.FlutterView.onAttachedToWindow() (FlutterView.java:510)
+I/com.salma.sera(16646):   at void android.view.View.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (View.java:20010)
+I/com.salma.sera(16646):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3589)
+I/com.salma.sera(16646):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3596)
+I/chatty  (16646): uid=10228(com.salma.sera) identical 1 line
+I/com.salma.sera(16646):   at void android.view.ViewGroup.dispatchAttachedToWindow(android.view.View$AttachInfo, int) (ViewGroup.java:3596)
+I/com.salma.sera(16646):   at void android.view.ViewRootImpl.performTraversals() (ViewRootImpl.java:2274)
+I/com.salma.sera(16646):   at void android.view.ViewRootImpl.doTraversal() (ViewRootImpl.java:1939)
+I/com.salma.sera(16646):   at void android.view.ViewRootImpl$TraversalRunnable.run() (ViewRootImpl.java:8592)
+I/com.salma.sera(16646):   at void android.view.Choreographer$CallbackRecord.run(long) (Choreographer.java:988)
+I/com.salma.sera(16646):   at void android.view.Choreographer.doCallbacks(int, long) (Choreographer.java:765)
+I/com.salma.sera(16646):   at void android.view.Choreographer.doFrame(long, int) (Choreographer.java:700)
+I/com.salma.sera(16646):   at void android.view.Choreographer$FrameDisplayEventReceiver.run() (Choreographer.java:967)
+I/com.salma.sera(16646):   at void android.os.Handler.handleCallback(android.os.Message) (Handler.java:873)
+I/com.salma.sera(16646):   at void android.os.Handler.dispatchMessage(android.os.Message) (Handler.java:99)
+I/com.salma.sera(16646):   at void android.os.Looper.loop() (Looper.java:214)
+I/com.salma.sera(16646):   at void android.app.ActivityThread.main(java.lang.String[]) (ActivityThread.java:7156)
+I/com.salma.sera(16646):   at java.lang.Object java.lang.reflect.Method.invoke(java.lang.Object, java.lang.Object[]) (Method.java:-2)
+I/com.salma.sera(16646):   at void com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run() (RuntimeInit.java:494)
+I/com.salma.sera(16646):   at void com.android.internal.os.ZygoteInit.main(java.lang.String[]) (ZygoteInit.java:975)
+I/com.salma.sera(16646): 
+D/SurfaceView(16646): onWindowVisibilityChanged(0) true io.flutter.embedding.android.FlutterSurfaceView{4585262 V.E...... ......I. 0,0-0,0} of ViewRootImpl@e859f7c[MainActivity]
+D/ViewRootImpl@e859f7c[MainActivity](16646): Relayout returned: old=[0,0][1080,1920] new=[0,0][1080,1920] result=0x7 surface={true 3513704448} changed=true
+I/OpenGLRenderer(16646): Initialized EGL, version 1.4
+D/OpenGLRenderer(16646): Swap behavior 2
+D/mali_winsys(16646): EGLint new_window_surface(egl_winsys_display *, void *, EGLSurface, EGLConfig, egl_winsys_surface **, EGLBoolean) returns 0x3000,  [1080x1920]-format:1
+D/OpenGLRenderer(16646): eglCreateWindowSurface = 0xec211e00, 0xd16ee008
+D/SurfaceView(16646): show() Surface(name=SurfaceView - com.salma.sera/com.salma.sera.MainActivity@4585262@0[16646])/@0xc811ff3 io.flutter.embedding.android.FlutterSurfaceView{4585262 V.E...... ......ID 0,0-1080,1920}
+D/SurfaceView(16646): surfaceCreated 1 #8 io.flutter.embedding.android.FlutterSurfaceView{4585262 V.E...... ......ID 0,0-1080,1920}
+D/mali_winsys(16646): EGLint new_window_surface(egl_winsys_display *, void *, EGLSurface, EGLConfig, egl_winsys_surface **, EGLBoolean) returns 0x3000,  [1080x1920]-format:1
+D/SurfaceView(16646): surfaceChanged (1080,1920) 1 #8 io.flutter.embedding.android.FlutterSurfaceView{4585262 V.E...... ......ID 0,0-1080,1920}
+W/com.salma.sera(16646): Accessing hidden method Landroid/os/Trace;->asyncTraceEnd(JLjava/lang/String;I)V (light greylist, reflection)
+D/vndksupport(16646): Loading /vendor/lib/hw/android.hardware.graphics.mapper@2.0-impl.so from current namespace instead of sphal namespace.
+D/ViewRootImpl@e859f7c[MainActivity](16646): Relayout returned: old=[0,0][1080,1920] new=[0,0][1080,1920] result=0x3 surface={true 3513704448} changed=false
+D/ViewRootImpl@e859f7c[MainActivity](16646): MSG_RESIZED: frame=[0,0][1080,1920] ci=[0,63][0,0] vi=[0,63][0,0] or=1
+D/ViewRootImpl@e859f7c[MainActivity](16646): MSG_WINDOW_FOCUS_CHANGED 1 1
+D/InputMethodManager(16646): prepareNavigationBarInfo() DecorView@b64e005[MainActivity]
+D/InputMethodManager(16646): getNavigationBarColor() -16777216
+D/InputMethodManager(16646): prepareNavigationBarInfo() DecorView@b64e005[MainActivity]
+D/InputMethodManager(16646): getNavigationBarColor() -16777216
+V/InputMethodManager(16646): Starting input: tba=com.salma.sera ic=null mNaviBarColor -16777216 mIsGetNaviBarColorSuccess true , NavVisible : true , NavTrans : false
+D/InputMethodManager(16646): startInputInner - Id : 0
+I/InputMethodManager(16646): startInputInner - mService.startInputOrWindowGainedFocus
+D/InputTransport(16646): Input channel constructed: fd=88
+D/InputMethodManager(16646): prepareNavigationBarInfo() DecorView@b64e005[MainActivity]
+D/InputMethodManager(16646): getNavigationBarColor() -16777216
+V/InputMethodManager(16646): Starting input: tba=com.salma.sera ic=null mNaviBarColor -16777216 mIsGetNaviBarColorSuccess true , NavVisible : true , NavTrans : false
+D/InputMethodManager(16646): startInputInner - Id : 0
+D/ViewRootImpl@e859f7c[MainActivity](16646): Relayout returned: old=[0,0][1080,1920] new=[0,0][1080,1920] result=0x1 surface={true 3513704448} changed=false
+D/ProfileInstaller(16646): Installing profile for com.salma.sera
+D/ViewRootImpl@e859f7c[MainActivity](16646): MSG_WINDOW_FOCUS_CHANGED 0 1
+D/InputMethodManager(16646): prepareNavigationBarInfo() DecorView@b64e005[MainActivity]
+D/InputMethodManager(16646): getNavigationBarColor() -16777216
+D/ViewRootImpl@e859f7c[MainActivity](16646): MSG_WINDOW_FOCUS_CHANGED 1 1
+D/InputMethodManager(16646): prepareNavigationBarInfo() DecorView@b64e005[MainActivity]
+D/InputMethodManager(16646): getNavigationBarColor() -16777216
+I/MultiWindowDecorSupport(16646): updateCaptionType >> com.android.internal.policy.MultiWindowDecorSupport@df2b02, isFloating: false, isApplication: true, hasWindowDecorCaption: false, hasWindowControllerCallback: true
+D/MultiWindowDecorSupport(16646): setCaptionType = 0
+D/ViewRootImpl@e859f7c[MainActivity](16646): MSG_RESIZED_REPORT: frame=[0,0][1920,1080] ci=[0,63][0,0] vi=[0,63][0,0] or=2
+D/ViewRootImpl@e859f7c[MainActivity](16646): Relayout returned: old=[0,0][1920,1080] new=[0,0][1920,1080] result=0x23 surface={true 3513704448} changed=false
+W/libEGL  (16646): EGLNativeWindowType 0xd16ee008 disconnect failed
+D/OpenGLRenderer(16646): eglDestroySurface = 0xec211e00, 0xd16ee000
+D/mali_winsys(16646): EGLint new_window_surface(egl_winsys_display *, void *, EGLSurface, EGLConfig, egl_winsys_surface **, EGLBoolean) returns 0x3000,  [1920x1080]-format:1
+D/OpenGLRenderer(16646): eglCreateWindowSurface = 0xec211e00, 0xd16ee008
+D/SurfaceView(16646): show() Surface(name=SurfaceView - com.salma.sera/com.salma.sera.MainActivity@4585262@0[16646])/@0xc811ff3 io.flutter.embedding.android.FlutterSurfaceView{4585262 V.E...... ......ID 0,0-1920,1080}
+D/SurfaceView(16646): surfaceChanged (1920,1080) 1 #5 io.flutter.embedding.android.FlutterSurfaceView{4585262 V.E...... ......ID 0,0-1920,1080}
+W/libEGL  (16646): EGLNativeWindowType 0xbde5c008 disconnect failed
+D/mali_winsys(16646): EGLint new_window_surface(egl_winsys_display *, void *, EGLSurface, EGLConfig, egl_winsys_surface **, EGLBoolean) returns 0x3000,  [1920x1080]-format:1
+D/ViewRootImpl@e859f7c[MainActivity](16646): MSG_RESIZED_REPORT: frame=[0,0][1920,1080] ci=[0,63][0,0] vi=[0,63][0,0] or=2
+
+ظـظـظـة EXCEPTION CAUGHT BY RENDERING LIBRARY ظـئظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+The following assertion was thrown during layout:
+A RenderFlex overflowed by 60 pixels on the bottom.
+
+The relevant error-causing widget was:
+  Column Column:file:///D:/Code/Flutter/sera/lib/screens/home_screen.dart:72:22
+
+To inspect this widget in Flutter DevTools, visit:
+http://127.0.0.1:9101/#/inspector?uri=http%3A%2F%2F127.0.0.1%3A53915%2FB_VBvJy8dLE%3D%2F&inspectorRef=inspector-0
+
+The overflowing RenderFlex has an orientation of Axis.vertical.
+The edge of the RenderFlex that is overflowing has been marked in the rendering with a yellow and
+black striped pattern. This is usually caused by the contents being too big for the RenderFlex.
+Consider applying a flex factor (e.g. using an Expanded widget) to force the children of the
+RenderFlex to fit within the available space instead of being sized to their natural size.
+This is considered an error condition because it indicates that there is content that cannot be
+seen. If the content is legitimately bigger than the available space, consider clipping it with a
+ClipRect widget before putting it in the flex, or using a scrollable container rather than a Flex,
+like a ListView.
+The specific RenderFlex in question is: RenderFlex#403c1 relayoutBoundary=up4 OVERFLOWING:
+  needs compositing
+  creator: Column ظ Padding ظ LayoutBuilder ظ MediaQuery ظ Padding ظ SafeArea ظ
+    KeyedSubtree-[GlobalKey#c19b6] ظ _BodyBuilder ظ MediaQuery ظ LayoutId-[<_ScaffoldSlot.body>] ظ
+    CustomMultiChildLayout ظ _ActionsScope ظ ظï»
+  parentData: offset=Offset(20.0, 0.0) (can use size)
+  constraints: BoxConstraints(0.0<=w<=691.4, 0.0<=h<=331.4)
+  size: Size(691.4, 331.4)
+  direction: vertical
+  mainAxisAlignment: start
+  mainAxisSize: max
+  crossAxisAlignment: center
+  verticalDirection: down
+  spacing: 0.0
+ظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùجظùتظùج
+ظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـظـ
+
+I/MultiWindowDecorSupport(16646): updateCaptionType >> com.android.internal.policy.MultiWindowDecorSupport@df2b02, isFloating: false, isApplication: true, hasWindowDecorCaption: false, hasWindowControllerCallback: true
+D/MultiWindowDecorSupport(16646): setCaptionType = 0
+D/ViewRootImpl@e859f7c[MainActivity](16646): Relayout returned: old=[0,0][1920,1080] new=[0,0][1080,1920] result=0x23 surface={true 3513704448} changed=false
+I/MultiWindowDecorSupport(16646): updateCaptionType >> com.android.internal.policy.MultiWindowDecorSupport@df2b02, isFloating: false, isApplication: true, hasWindowDecorCaption: false, hasWindowControllerCallback: true
+D/MultiWindowDecorSupport(16646): setCaptionType = 0
+W/libEGL  (16646): EGLNativeWindowType 0xd16ee008 disconnect failed
+D/OpenGLRenderer(16646): eglDestroySurface = 0xec211e00, 0xd16ee000
+D/mali_winsys(16646): EGLint new_window_surface(egl_winsys_display *, void *, EGLSurface, EGLConfig, egl_winsys_surface **, EGLBoolean) returns 0x3000,  [1080x1920]-format:1
+D/OpenGLRenderer(16646): eglCreateWindowSurface = 0xec211e00, 0xd16ee008
+D/SurfaceView(16646): show() Surface(name=SurfaceView - com.salma.sera/com.salma.sera.MainActivity@4585262@0[16646])/@0xc811ff3 io.flutter.embedding.android.FlutterSurfaceView{4585262 V.E...... ......ID 0,0-1080,1920}
+D/SurfaceView(16646): surfaceChanged (1080,1920) 1 #5 io.flutter.embedding.android.FlutterSurfaceView{4585262 V.E...... ......ID 0,0-1080,1920}
+W/libEGL  (16646): EGLNativeWindowType 0xbde5c008 disconnect failed
+D/mali_winsys(16646): EGLint new_window_surface(egl_winsys_display *, void *, EGLSurface, EGLConfig, egl_winsys_surface **, EGLBoolean) returns 0x3000,  [1080x1920]-format:1
+D/ViewRootImpl@e859f7c[MainActivity](16646): MSG_RESIZED_REPORT: frame=[0,0][1080,1920] ci=[0,63][0,0] vi=[0,63][0,0] or=1
+D/ViewRootImpl@e859f7c[MainActivity](16646): MSG_RESIZED_REPORT: frame=[0,0][1080,1920] ci=[0,63][0,0] vi=[0,63][0,0] or=1
+D/ViewRootImpl@e859f7c[MainActivity](16646): MSG_WINDOW_FOCUS_CHANGED 0 1
+D/InputMethodManager(16646): prepareNavigationBarInfo() DecorView@b64e005[MainActivity]
+D/InputMethodManager(16646): getNavigationBarColor() -16777216
+D/ViewRootImpl@e859f7c[MainActivity](16646): stopped(true) old=false
+D/SurfaceView(16646): windowStopped(true) false io.flutter.embedding.android.FlutterSurfaceView{4585262 V.E...... ........ 0,0-1080,1920} of ViewRootImpl@e859f7c[MainActivity]
+D/SurfaceView(16646): show() Surface(name=SurfaceView - com.salma.sera/com.salma.sera.MainActivity@4585262@0[16646])/@0xc811ff3 io.flutter.embedding.android.FlutterSurfaceView{4585262 V.E...... ........ 0,0-1080,1920}
+D/SurfaceView(16646): surfaceDestroyed callback.size 1 #1 io.flutter.embedding.android.FlutterSurfaceView{4585262 V.E...... ........ 0,0-1080,1920}
+W/libEGL  (16646): EGLNativeWindowType 0xbde5c008 disconnect failed
+D/SurfaceView(16646): destroy() Surface(name=SurfaceView - com.salma.sera/com.salma.sera.MainActivity@4585262@0[16646])/@0xc811ff3 io.flutter.embedding.android.FlutterSurfaceView{4585262 V.E...... ........ 0,0-1080,1920}
+D/SurfaceView(16646): onWindowVisibilityChanged(4) false io.flutter.embedding.android.FlutterSurfaceView{4585262 G.E...... ......I. 0,0-1080,1920} of ViewRootImpl@e859f7c[MainActivity]
+W/libEGL  (16646): EGLNativeWindowType 0xd16ee008 disconnect failed
+D/OpenGLRenderer(16646): eglDestroySurface = 0xec211e00, 0xd16ee000
+D/ViewRootImpl@e859f7c[MainActivity](16646): Relayout returned: old=[0,0][1080,1920] new=[0,0][1080,1920] result=0x5 surface={false 0} changed=true
+D/InputTransport(16646): Input channel destroyed: fd=88
+D/SurfaceView(16646): onWindowVisibilityChanged(8) false io.flutter.embedding.android.FlutterSurfaceView{4585262 G.E...... ......I. 0,0-1080,1920} of ViewRootImpl@e859f7c[MainActivity]
+D/ViewRootImpl@e859f7c[MainActivity](16646): Relayout returned: old=[0,0][1080,1920] new=[0,0][1080,1920] result=0x1 surface={false 0} changed=false
+Lost connection to device.

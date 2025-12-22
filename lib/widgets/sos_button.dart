@@ -1,109 +1,88 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// audio player removed to restore stable build
+import 'package:provider/provider.dart';
+import '../providers/sos_provider.dart';
+import '../utils/screen_utils.dart';
 
 class SosButton extends StatefulWidget {
-  const SosButton({super.key});
+  final double? size;
+
+  const SosButton({super.key, this.size});
 
   @override
   State<SosButton> createState() => _SosButtonState();
 }
 
-class _SosButtonState extends State<SosButton> with SingleTickerProviderStateMixin {
-  bool _isPressed = false;
-  Timer? _longPressTimer;
+class _SosButtonState extends State<SosButton>
+    with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
-  // audio removed
 
   @override
   void initState() {
     super.initState();
     _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    )..repeat(reverse: true);
+        vsync: this, duration: const Duration(milliseconds: 1000))
+      ..repeat(reverse: true);
   }
 
   @override
   void dispose() {
-    _longPressTimer?.cancel();
     _pulseController.dispose();
     super.dispose();
   }
 
-  void _onLongPressStart() {
-    HapticFeedback.mediumImpact();
-    setState(() {
-      _isPressed = true;
-    });
-
-    _longPressTimer = Timer(const Duration(milliseconds: 1500), () {
-      _showSosDialog();
-    });
-  }
-
-  void _onLongPressEnd() {
-    _longPressTimer?.cancel();
-    setState(() {
-      _isPressed = false;
-    });
-  }
-
-  void _showSosDialog() {
-    HapticFeedback.heavyImpact();
-    _onLongPressEnd();
-
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (context) => const SosDialog(),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
+    final sosProvider = Provider.of<SosProvider>(context);
+    final buttonSize = widget.size ?? ScreenUtils.w(40);
+    final isPressed = sosProvider.isCountingDown; // Active state
+
     return GestureDetector(
-      onLongPressStart: (_) => _onLongPressStart(),
-      onLongPressEnd: (_) => _onLongPressEnd(),
+      onLongPressStart: (_) {
+        HapticFeedback.mediumImpact();
+        sosProvider.startSosSequence();
+        _showCountdownDialog(context);
+      },
       child: AnimatedBuilder(
         animation: _pulseController,
         builder: (context, child) {
-          final scale = _isPressed ? 0.95 : (1.0 + _pulseController.value * 0.05);
-          
+          final scale =
+              isPressed ? 0.95 : (1.0 + _pulseController.value * 0.05);
           return Transform.scale(
             scale: scale,
             child: Container(
-              width: 144,
-              height: 144,
+              width: buttonSize,
+              height: buttonSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 gradient: RadialGradient(
-                  colors: [
-                    Colors.red,
-                    Colors.red.shade700,
-                  ],
+                  colors: [Colors.red, Colors.red.shade700],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.red.withAlpha(((_isPressed ? 0.6 : 0.4) * 255).round()),
-                    blurRadius: _isPressed ? 30 : 40,
-                    spreadRadius: _isPressed ? 5 : 10,
+                    color:
+                        Colors.red.withValues(alpha: (isPressed ? 0.6 : 0.4)),
+                    // Glow reduced by half as requested
+                    blurRadius:
+                        (isPressed ? buttonSize * 0.21 : buttonSize * 0.28) / 2,
+                    spreadRadius:
+                        (isPressed ? buttonSize * 0.035 : buttonSize * 0.07) /
+                            2,
                   ),
                 ],
                 border: Border.all(
                   color: Colors.red.shade300,
-                  width: 3.6,
+                  width: buttonSize * 0.025,
                 ),
               ),
-              child: const Center(
+              child: Center(
                 child: Text(
                   'SOS',
                   style: TextStyle(
-                    fontSize: 43.2,
+                    fontSize: buttonSize * 0.3,
                     fontWeight: FontWeight.w900,
                     color: Colors.white,
-                    letterSpacing: 4,
+                    letterSpacing: buttonSize * 0.028,
                   ),
                 ),
               ),
@@ -113,146 +92,156 @@ class _SosButtonState extends State<SosButton> with SingleTickerProviderStateMix
       ),
     );
   }
-}
 
-class SosDialog extends StatefulWidget {
-  const SosDialog({super.key});
-
-  @override
-  State<SosDialog> createState() => _SosDialogState();
-}
-
-class _SosDialogState extends State<SosDialog> {
-  int _countdown = 15;
-  Timer? _timer;
-  // audio methods removed to keep build stable
-  void initState() {
-    super.initState();
-    _startCountdown();
-  }
-
-  void _startCountdown() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_countdown > 0) {
-        // countdown sound removed
-        setState(() {
-          _countdown--;
-        });
-      } else {
-        _timer?.cancel();
-        // confirm sound removed
-        Navigator.of(context).pop();
-        _showSuccessMessage();
-      }
-    });
-  }
-
-  // audio methods removed to keep build stable
-
-  void _showSuccessMessage() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تم إرسال طلب الاستغاثة بنجاح!'),
-        backgroundColor: Colors.green,
-        duration: Duration(seconds: 3),
-      ),
+  void _showCountdownDialog(BuildContext parentContext) {
+    showDialog(
+      context: parentContext,
+      barrierDismissible: false,
+      builder: (dialogContext) => const SosCountdownDialog(),
     );
   }
+}
 
-  void _cancelSos() {
-    _timer?.cancel();
-    // cancel sound removed
-    Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('تم إلغاء طلب الاستغاثة.'),
-        backgroundColor: Colors.orange,
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
-
-  // audio methods removed to keep build stable
+class SosCountdownDialog extends StatefulWidget {
+  const SosCountdownDialog({super.key});
 
   @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
+  State<SosCountdownDialog> createState() => _SosCountdownDialogState();
+}
 
+class _SosCountdownDialogState extends State<SosCountdownDialog> {
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1F2937),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: Colors.red,
-            width: 2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.red.withAlpha((0.5 * 255).round()),
-              blurRadius: 20,
-              spreadRadius: 5,
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'تم تفعيل وضع الاستغاثة الذكي',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.red,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'سيتم إرسال تنبيه لجهات الطوارئ وموقعك الحالي خلال:',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[300],
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-            Text(
-              '$_countdown',
-              style: const TextStyle(
-                fontSize: 80,
-                fontWeight: FontWeight.bold,
-                color: Colors.red,
-                fontFamily: 'monospace',
-              ),
-            ),
-            const SizedBox(height: 32),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: _cancelSos,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.grey[700],
-                  padding: const EdgeInsets.symmetric(vertical: 16),
+    return Consumer<SosProvider>(
+      builder: (context, provider, child) {
+        // --- Logic to Handle State Changes ---
+        // We use SchedulerBinding to avoid setState during build errors
+        if (provider.isIdle) {
+          // If became idle (cancelled or finished), close dialog
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+              // Check if it was a cancellation to show snackbar
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('تم إلغاء إرسال الاستغاثة'),
+                  backgroundColor: Colors.orange,
                 ),
-                child: const Text(
-                  'إلغاء',
+              );
+            }
+          });
+        } else if (provider.state == SosState.sending ||
+            provider.state == SosState.finished) {
+          // Sequence finished successfully
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('تم إرسال نداء الاستغاثة بنجاح'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            }
+          });
+        }
+
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: const Color(0xFF1F2937),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.red, width: 2),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.red.withValues(alpha: 0.5),
+                  blurRadius: 20,
+                  spreadRadius: 5,
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'تم تفعيل وضع الاستغاثة',
                   style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.red),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'سيتم إرسال تنبيه استغاثة لجهات الطوارئ وموقعك الحالي خلال:',
+                  style: TextStyle(fontSize: 14, color: Colors.white70),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+
+                // Countdown Circle
+                Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 110,
+                      height: 110,
+                      child: CircularProgressIndicator(
+                        value: 1.0 - provider.progress, // Inverse progress
+                        strokeWidth: 8,
+                        color: Colors.red,
+                        backgroundColor: Colors.grey[800],
+                      ),
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${provider.countdownValue}',
+                          style: const TextStyle(
+                              fontSize: 36,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red),
+                        ),
+                        const Text(
+                          'ثانية',
+                          style:
+                              TextStyle(fontSize: 12, color: Colors.redAccent),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 24),
+
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      provider.cancelSosSequence();
+                      // Dialog auto-closes due to listener above
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey[700],
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('إلغاء الآن',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white)),
                   ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

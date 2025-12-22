@@ -19,21 +19,33 @@ class FirstAidScreen extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 1.0,
-            ),
-            itemCount: FirstAidData.cases.length,
-            itemBuilder: (context, index) {
-              final caseData = FirstAidData.cases[index];
-              return _FirstAidCard(caseData: caseData);
-            },
-          ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final crossAxisCount =
+                (constraints.maxWidth / 190).clamp(2, 4).floor();
+            final aspectRatio = constraints.maxWidth >= 900
+                ? 1.2
+                : constraints.maxWidth >= 600
+                    ? 1.05
+                    : 0.9;
+
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: aspectRatio,
+                ),
+                itemCount: FirstAidData.cases.length,
+                itemBuilder: (context, index) {
+                  final caseData = FirstAidData.cases[index];
+                  return _FirstAidCard(caseData: caseData);
+                },
+              ),
+            );
+          },
         ),
       ),
     );

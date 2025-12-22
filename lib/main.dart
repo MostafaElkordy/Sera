@@ -1,137 +1,82 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'screens/home_screen.dart';
-import 'screens/first_aid_screen.dart';
-import 'screens/first_aid_detail_screen.dart';
-import 'screens/disasters_screen.dart';
-import 'screens/disaster_detail_screen.dart';
-import 'providers/navigation_provider.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
-void main() {
+import 'navigation/main_navigator.dart';
+import 'providers/navigation_provider.dart';
+import 'providers/sos_provider.dart';
+import 'providers/theme_provider.dart';
+import 'screens/splash_screen.dart';
+import 'services/navigation_persistence_service.dart';
+import 'services/offline_service.dart';
+import 'services/persistence_service.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Set preferred orientations
-  SystemChrome.setPreferredOrientations([
+
+  // 1. Initialize Critical Services
+  await PersistenceService().init();
+  await NavigationPersistenceService().initialize();
+  offlineService.initialize();
+
+  // 2. Lock Orientation
+  await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
   ]);
-  
-  // Set system UI overlay style
+
+  // 3. System UI Overlay Style
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
       statusBarIconBrightness: Brightness.light,
-      systemNavigationBarColor: Color(0xFF1F2937),
-      systemNavigationBarIconBrightness: Brightness.light,
     ),
   );
-  
-  runApp(const SeraEmergencyApp());
+
+  runApp(const SeraApp());
 }
 
-class SeraEmergencyApp extends StatelessWidget {
-  const SeraEmergencyApp({super.key});
+class SeraApp extends StatelessWidget {
+  const SeraApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => NavigationProvider(),
-      child: MaterialApp(
-        title: 'SERA - تطبيق الطوارئ الذكي',
-        debugShowCheckedModeBanner: false,
-        
-        // RTL Support
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [
-          Locale('ar', 'AE'),
-          Locale('en', 'US'),
-        ],
-        locale: const Locale('ar', 'AE'),
-        
-        theme: ThemeData(
-          useMaterial3: true,
-          brightness: Brightness.dark,
-          primarySwatch: Colors.blue,
-          scaffoldBackgroundColor: const Color(0xFF1F2937),
-          cardColor: const Color(0xFF374151),
-          fontFamily: 'Cairo',
-          
-          // App Bar Theme
-          appBarTheme: const AppBarTheme(
-            backgroundColor: Color(0xFF111827),
-            elevation: 4,
-            centerTitle: true,
-            titleTextStyle: TextStyle(
-              fontFamily: 'Cairo',
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
-          ),
-          
-          // Elevated Button Theme
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              textStyle: const TextStyle(
-                fontFamily: 'Cairo',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-        
-        home: const MainNavigator(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => NavigationProvider()),
+        ChangeNotifierProvider(
+            create: (_) => ThemeProvider()..loadTheme()), // تهيئة الثيم
+        ChangeNotifierProvider(create: (_) => SosProvider()), // New logic brain
+      ],
+      child: Consumer<ThemeProvider>(
+        builder: (context, themeProvider, child) {
+          return MaterialApp(
+            title: 'SERA',
+            debugShowCheckedModeBanner: false,
+
+            // Localization
+            localizationsDelegates: const [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: const [
+              Locale('ar', 'AE'),
+              Locale('en', 'US'),
+            ],
+            locale: const Locale('ar', 'AE'),
+
+            // Dynamic Theme
+            theme: themeProvider.themeData, // استخدام ثيم المزود
+
+            initialRoute: '/',
+            routes: {
+              '/': (context) => const SplashScreen(),
+              MainNavigator.routeName: (context) => const MainNavigator(),
+            },
+          );
+        },
       ),
-    );
-  }
-}
-
-class MainNavigator extends StatelessWidget {
-  const MainNavigator({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<NavigationProvider>(
-      builder: (context, navProvider, child) {
-        Widget currentScreen;
-        
-        switch (navProvider.currentPage) {
-          case NavigationPage.home:
-            currentScreen = const HomeScreen();
-            break;
-          case NavigationPage.firstAid:
-            currentScreen = const FirstAidScreen();
-            break;
-          case NavigationPage.firstAidDetail:
-            currentScreen = FirstAidDetailScreen(
-              caseData: navProvider.selectedFirstAidCase!,
-            );
-            break;
-          case NavigationPage.disasters:
-            currentScreen = const DisastersScreen();
-            break;
-          case NavigationPage.disasterDetail:
-            currentScreen = DisasterDetailScreen(
-              disasterData: navProvider.selectedDisaster!,
-            );
-            break;
-        }
-        
-        // Return the current screen directly. Using a custom PopScope caused
-        // gesture/navigation issues — rebuilds happen via Consumer on notifyListeners.
-        return currentScreen;
-      },
     );
   }
 }

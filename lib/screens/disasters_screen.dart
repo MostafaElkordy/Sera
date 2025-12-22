@@ -19,21 +19,33 @@ class DisastersScreen extends StatelessWidget {
         ),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 1.0,
-            ),
-            itemCount: DisasterData.disasters.length,
-            itemBuilder: (context, index) {
-              final disaster = DisasterData.disasters[index];
-              return _DisasterCard(disaster: disaster);
-            },
-          ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final crossAxisCount =
+                (constraints.maxWidth / 190).clamp(2, 4).floor();
+            final aspectRatio = constraints.maxWidth >= 900
+                ? 1.2
+                : constraints.maxWidth >= 600
+                    ? 1.05
+                    : 0.9;
+
+            return Padding(
+              padding: const EdgeInsets.all(16),
+              child: GridView.builder(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: crossAxisCount,
+                  crossAxisSpacing: 16,
+                  mainAxisSpacing: 16,
+                  childAspectRatio: aspectRatio,
+                ),
+                itemCount: DisasterData.disasters.length,
+                itemBuilder: (context, index) {
+                  final disaster = DisasterData.disasters[index];
+                  return _DisasterCard(disaster: disaster);
+                },
+              ),
+            );
+          },
         ),
       ),
     );
