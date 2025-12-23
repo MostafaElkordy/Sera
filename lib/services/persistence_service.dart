@@ -35,6 +35,20 @@ class PersistenceService {
   static const String _keyFirstTimeUser = 'first_time_user';
   static const String _keyEmergencyContacts = 'emergency_contacts';
 
+  // New Constants Phase 2
+  static const String _keyUserGender = 'user_gender';
+  static const String _keyUserDob = 'user_dob';
+  static const String _keyUserWeight = 'user_weight';
+  static const String _keyUserHeight = 'user_height';
+  static const String _keyUserMedications = 'user_medications';
+  static const String _keyUserImagePath = 'user_image_path';
+  static const String _keyUserMedicalDirectives = 'user_medical_directives';
+  static const String _keyUserDoctorName = 'user_doctor_name';
+  static const String _keyUserDoctorPhone = 'user_doctor_phone';
+  static const String _keyUserInsuranceType = 'user_insurance_type';
+  static const String _keyUserInsuranceProvider = 'user_insurance_provider';
+  static const String _keyUserInsurancePolicy = 'user_insurance_policy';
+
   // Initialize Service
   Future<void> initialize() async {
     if (_isInitialized) return;
@@ -60,7 +74,7 @@ class PersistenceService {
   }
 
   String getThemeMode() {
-    return _prefs?.getString(_keyThemeMode) ?? 'midnight';
+    return _prefs?.getString(_keyThemeMode) ?? 'daylight';
   }
 
   // ===== User Data =====
@@ -205,6 +219,76 @@ class PersistenceService {
     await _prefs?.setBool(_keyFirstTimeUser, isFirst);
   }
 
+  // --- New Getters/Setters ---
+
+  Future<void> setUserGender(String gender) async =>
+      await _prefs?.setString(_keyUserGender, gender);
+  String? getUserGender() => _prefs?.getString(_keyUserGender);
+
+  Future<void> setUserDob(String dob) async =>
+      await _prefs?.setString(_keyUserDob, dob);
+  String? getUserDob() => _prefs?.getString(_keyUserDob);
+
+  Future<void> setUserWeight(String weight) async =>
+      await _prefs?.setString(_keyUserWeight, weight);
+  String? getUserWeight() => _prefs?.getString(_keyUserWeight);
+
+  Future<void> setUserHeight(String height) async =>
+      await _prefs?.setString(_keyUserHeight, height);
+  String? getUserHeight() => _prefs?.getString(_keyUserHeight);
+
+  Future<void> setUserImagePath(String path) async =>
+      await _prefs?.setString(_keyUserImagePath, path);
+  String? getUserImagePath() => _prefs?.getString(_keyUserImagePath);
+
+  Future<void> setUserDoctorName(String name) async =>
+      await _prefs?.setString(_keyUserDoctorName, name);
+  String? getUserDoctorName() => _prefs?.getString(_keyUserDoctorName);
+
+  Future<void> setUserDoctorPhone(String phone) async =>
+      await _prefs?.setString(_keyUserDoctorPhone, phone);
+  String? getUserDoctorPhone() => _prefs?.getString(_keyUserDoctorPhone);
+
+  Future<void> setUserInsuranceType(String type) async =>
+      await _prefs?.setString(_keyUserInsuranceType, type);
+  String? getUserInsuranceType() => _prefs?.getString(_keyUserInsuranceType);
+
+  Future<void> setUserInsuranceProvider(String provider) async =>
+      await _prefs?.setString(_keyUserInsuranceProvider, provider);
+  String? getUserInsuranceProvider() =>
+      _prefs?.getString(_keyUserInsuranceProvider);
+
+  Future<void> setUserInsurancePolicy(String policy) async =>
+      await _prefs?.setString(_keyUserInsurancePolicy, policy);
+  String? getUserInsurancePolicy() =>
+      _prefs?.getString(_keyUserInsurancePolicy);
+
+  // Lists (Medications & Directives)
+  Future<void> setUserMedications(List<String> meds) async =>
+      await _prefs?.setString(_keyUserMedications, jsonEncode(meds));
+  List<String> getUserMedications() {
+    final s = _prefs?.getString(_keyUserMedications);
+    if (s == null) return [];
+    try {
+      return List<String>.from(jsonDecode(s));
+    } catch (_) {
+      return [];
+    }
+  }
+
+  Future<void> setUserMedicalDirectives(List<String> directives) async =>
+      await _prefs?.setString(
+          _keyUserMedicalDirectives, jsonEncode(directives));
+  List<String> getUserMedicalDirectives() {
+    final s = _prefs?.getString(_keyUserMedicalDirectives);
+    if (s == null) return [];
+    try {
+      return List<String>.from(jsonDecode(s));
+    } catch (_) {
+      return [];
+    }
+  }
+
   // ===== Advanced =====
 
   Future<void> saveUserData(Map<String, dynamic> userData) async {
@@ -215,6 +299,41 @@ class PersistenceService {
       await setUserBloodType(userData['bloodType']);
     if (userData.containsKey('medicalHistory'))
       await setMedicalHistory(userData['medicalHistory']);
+
+    // New Fields
+    // New Fields
+    if (userData.containsKey('gender') && userData['gender'] != null)
+      await setUserGender(userData['gender']);
+    if (userData.containsKey('dob') && userData['dob'] != null)
+      await setUserDob(userData['dob']);
+    if (userData.containsKey('weight') && userData['weight'] != null)
+      await setUserWeight(userData['weight']);
+    if (userData.containsKey('height') && userData['height'] != null)
+      await setUserHeight(userData['height']);
+    if (userData.containsKey('imagePath') && userData['imagePath'] != null)
+      await setUserImagePath(userData['imagePath']);
+
+    if (userData.containsKey('doctorName') && userData['doctorName'] != null)
+      await setUserDoctorName(userData['doctorName']);
+    if (userData.containsKey('doctorPhone') && userData['doctorPhone'] != null)
+      await setUserDoctorPhone(userData['doctorPhone']);
+
+    if (userData.containsKey('insuranceType') &&
+        userData['insuranceType'] != null)
+      await setUserInsuranceType(userData['insuranceType']);
+    if (userData.containsKey('insuranceProvider') &&
+        userData['insuranceProvider'] != null)
+      await setUserInsuranceProvider(userData['insuranceProvider']);
+    if (userData.containsKey('insurancePolicy') &&
+        userData['insurancePolicy'] != null)
+      await setUserInsurancePolicy(userData['insurancePolicy']);
+
+    if (userData.containsKey('medications') && userData['medications'] != null)
+      await setUserMedications(List<String>.from(userData['medications']));
+    if (userData.containsKey('medicalDirectives') &&
+        userData['medicalDirectives'] != null)
+      await setUserMedicalDirectives(
+          List<String>.from(userData['medicalDirectives']));
   }
 
   Map<String, dynamic> getUserData() {
@@ -224,6 +343,19 @@ class PersistenceService {
       'phone': getUserPhone(),
       'bloodType': getUserBloodType(),
       'medicalHistory': getMedicalHistory(),
+      // New Fields
+      'gender': getUserGender(),
+      'dob': getUserDob(),
+      'weight': getUserWeight(),
+      'height': getUserHeight(),
+      'imagePath': getUserImagePath(),
+      'doctorName': getUserDoctorName(),
+      'doctorPhone': getUserDoctorPhone(),
+      'insuranceType': getUserInsuranceType(),
+      'insuranceProvider': getUserInsuranceProvider(),
+      'insurancePolicy': getUserInsurancePolicy(),
+      'medications': getUserMedications(),
+      'medicalDirectives': getUserMedicalDirectives(),
     };
   }
 

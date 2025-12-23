@@ -4,7 +4,7 @@ import '../services/persistence_service.dart';
 
 class ThemeProvider extends ChangeNotifier {
   final PersistenceService _persistence = PersistenceService();
-  AppThemeType _currentTheme = AppThemeType.midnight;
+  AppThemeType _currentTheme = AppThemeType.daylight;
 
   AppThemeType get currentTheme => _currentTheme;
 
@@ -28,7 +28,7 @@ class ThemeProvider extends ChangeNotifier {
   AppThemeType _mapStringToTheme(String name) {
     return AppThemeType.values.firstWhere(
       (e) => e.name == name,
-      orElse: () => AppThemeType.midnight,
+      orElse: () => AppThemeType.daylight,
     );
   }
 }

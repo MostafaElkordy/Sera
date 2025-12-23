@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/navigation_provider.dart';
+import 'dart:io';
 import '../widgets/sos_button.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -53,7 +53,7 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       _buildCircleBtn(
                         icon: Icons.power_settings_new,
-                        onTap: () => SystemNavigator.pop(),
+                        onTap: () => exit(0),
                         theme: theme,
                         color: Colors.redAccent,
                       ),
@@ -91,45 +91,48 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 20),
 
                     // --- Services Grid ---
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildServiceCard(
-                            context,
-                            title: 'الإسعافات الأولية',
-                            subtitle: 'إرشادات فورية لحالات حرجة',
-                            icon: Icons.medical_services_outlined,
-                            color: Colors.blueAccent,
-                            onTap: () =>
-                                navProvider.navigateTo(NavigationPage.firstAid),
-                            theme: theme,
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: _buildServiceCard(
+                              context,
+                              title: 'الإسعافات الأولية',
+                              subtitle: 'إرشادات فورية ذكية',
+                              icon: Icons.medical_services_outlined,
+                              color: Colors.blueAccent,
+                              onTap: () => navProvider
+                                  .navigateTo(NavigationPage.firstAid),
+                              theme: theme,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: _buildServiceCard(
-                            context,
-                            title: 'الكوارث والآزمات',
-                            subtitle: 'دليل النجاة الذكي',
-                            icon: Icons.warning_amber_rounded,
-                            color: Colors.orangeAccent,
-                            onTap: () => navProvider
-                                .navigateTo(NavigationPage.disasters),
-                            theme: theme,
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: _buildServiceCard(
+                              context,
+                              title: 'الكوارث والأزمات',
+                              subtitle: 'دليل النجاة الذكي',
+                              icon: Icons.warning_amber_rounded,
+                              color: Colors.orangeAccent,
+                              onTap: () => navProvider
+                                  .navigateTo(NavigationPage.disasters),
+                              theme: theme,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
 
                     const SizedBox(height: 16),
 
-                    // --- History / Logs Card ---
+                    // --- Profile Card (Moved from Top) ---
                     _buildWideCard(
                       context,
-                      title: 'سجل الطوارئ',
-                      icon: Icons.history,
+                      title: 'الملف الشخصي',
+                      icon: Icons.person,
                       onTap: () =>
-                          navProvider.navigateTo(NavigationPage.history),
+                          navProvider.navigateTo(NavigationPage.profile),
                       theme: theme,
                     ),
                     const SizedBox(height: 12),
@@ -206,7 +209,7 @@ class HomeScreen extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: 140,
+        // height: 140, // Removed fixed height to prevent overflow
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           // Gradient Background
@@ -223,7 +226,8 @@ class HomeScreen extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          // Aligned to start (Top) as requested
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
               padding: const EdgeInsets.all(10),
@@ -233,6 +237,8 @@ class HomeScreen extends StatelessWidget {
               ),
               child: Icon(icon, size: 32, color: color),
             ),
+            const SizedBox(
+                height: 24), // Increased spacing due to top alignment
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

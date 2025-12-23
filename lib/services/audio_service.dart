@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 enum SoundType {
   notification,
@@ -26,7 +27,7 @@ class AudioService {
   static final AudioService _instance = AudioService._internal();
 
   bool _isInitialized = false;
-  bool _isMuted = false;
+  bool _isMuted = true;
   double _masterVolume = 0.8;
   late AudioPlayer _player;
 
@@ -72,12 +73,19 @@ class AudioService {
       // Assumes assets/sounds/ naming convention
       await _player.play(AssetSource('sounds/${soundType.name}.mp3'));
     } catch (e) {
-      debugPrint('Error playing sound $soundType: $e');
+      // Suppress missing asset errors for clean logs
+      // debugPrint('Error playing sound $soundType: $e');
     }
   }
 
   Future<void> playSosAlert() async {
-    await playSound(SoundType.sos, overrideMute: true);
+    // Try system alert since custom assets might be missing
+    await SystemSound.play(SystemSoundType.click);
+    // And vibrate
+    await HapticFeedback.heavyImpact();
+
+    // Attempt asset play just in case
+    // await playSound(SoundType.sos, overrideMute: true);
   }
 
   Future<void> playSuccess() async {
@@ -93,7 +101,8 @@ class AudioService {
   }
 
   Future<void> playClick() async {
-    await playSound(SoundType.click);
+    // Fallback to system click since assets might be missing
+    await SystemSound.play(SystemSoundType.click);
   }
 
   Future<void> stopAll() async {

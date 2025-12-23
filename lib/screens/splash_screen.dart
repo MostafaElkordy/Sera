@@ -6,6 +6,7 @@ import '../providers/navigation_provider.dart';
 import '../screens/permissions_screen.dart';
 import '../utils/screen_utils.dart';
 import '../services/persistence_service.dart';
+import '../services/navigation_persistence_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -33,58 +34,58 @@ class _SplashScreenState extends State<SplashScreen>
   void initState() {
     super.initState();
 
-    // Animation controllers (Quick & Snappy)
+    // No long animations, just quick reveal
     _logoScaleController = AnimationController(
-        duration: const Duration(milliseconds: 600), vsync: this);
-
+        duration: const Duration(milliseconds: 10), vsync: this);
     _textFadeController = AnimationController(
-        duration: const Duration(milliseconds: 400), vsync: this);
-
+        duration: const Duration(milliseconds: 10), vsync: this);
     _slogan1FadeController = AnimationController(
-        duration: const Duration(milliseconds: 400), vsync: this);
-
+        duration: const Duration(milliseconds: 10), vsync: this);
     _slogan2FadeController = AnimationController(
-        duration: const Duration(milliseconds: 400), vsync: this);
+        duration: const Duration(milliseconds: 10), vsync: this);
 
     _pulseController = AnimationController(
         duration: const Duration(milliseconds: 1000), vsync: this)
       ..repeat(reverse: true);
 
-    _logoScale = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _logoScaleController, curve: Curves.elasticOut),
-    );
-
-    _textFade = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _textFadeController, curve: Curves.easeIn),
-    );
-
-    _slogan1Fade = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _slogan1FadeController, curve: Curves.easeIn),
-    );
-
-    _slogan2Fade = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _slogan2FadeController, curve: Curves.easeIn),
-    );
+    // Setup animations to end immediately
+    _logoScale =
+        Tween<double>(begin: 1.0, end: 1.0).animate(_logoScaleController);
+    _textFade =
+        Tween<double>(begin: 1.0, end: 1.0).animate(_textFadeController);
+    _slogan1Fade =
+        Tween<double>(begin: 1.0, end: 1.0).animate(_slogan1FadeController);
+    _slogan2Fade =
+        Tween<double>(begin: 1.0, end: 1.0).animate(_slogan2FadeController);
 
     _pulse = Tween<double>(begin: 1.0, end: 1.05).animate(
       CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut),
     );
 
-    _startAnimationSequence();
+    // Start immediately
+    _logoScaleController.value = 1.0;
+    _textFadeController.value = 1.0;
+    _slogan1FadeController.value = 1.0;
+    _slogan2FadeController.value = 1.0;
 
-    // Navigate after 2 seconds
-    Future.delayed(const Duration(milliseconds: 2000), _navigateToNextScreen);
+    // Start initialization and timer in parallel
+    _initApp();
   }
 
-  void _startAnimationSequence() {
-    // Start fast
-    _logoScaleController.forward();
-    Future.delayed(
-        const Duration(milliseconds: 100), () => _textFadeController.forward());
-    Future.delayed(const Duration(milliseconds: 300), () {
-      _slogan1FadeController.forward();
-      _slogan2FadeController.forward();
-    });
+  Future<void> _initApp() async {
+    // 1. Minimum Splash Duration (2 seconds)
+    final minDelay = Future.delayed(const Duration(seconds: 2));
+
+    // 2. Initialize Critical Services (Parallel)
+    final servicesInit = Future.wait([
+      PersistenceService().init(),
+      NavigationPersistenceService().initialize(),
+    ]);
+
+    // Wait for BOTH to complete (Safety First)
+    await Future.wait([minDelay, servicesInit]);
+
+    if (mounted) _navigateToNextScreen();
   }
 
   Future<void> _navigateToNextScreen() async {

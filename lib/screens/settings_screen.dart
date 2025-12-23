@@ -15,9 +15,9 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _soundEnabled = true;
+  bool _soundEnabled = false;
   bool _notificationsEnabled = true; // Used in switch
-  bool _hapticEnabled = true;
+  bool _hapticEnabled = false;
 
   @override
   void initState() {
@@ -56,22 +56,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
             child: Column(
               children: [
                 _buildThemeRadio(
-                  title: 'مسائي (Midnight)',
-                  subtitle: 'مريح للعين في الظلام',
-                  value: AppThemeType.midnight,
-                  groupValue: themeProvider.currentTheme,
-                  onChanged: (val) => themeProvider.setTheme(val!),
-                  icon: Icons.nights_stay,
-                  theme: theme,
-                ),
-                Divider(color: theme.dividerColor, height: 1),
-                _buildThemeRadio(
                   title: 'نهاري (Daylight)',
                   subtitle: 'وضوح عالي في الإضاءة القوية',
                   value: AppThemeType.daylight,
                   groupValue: themeProvider.currentTheme,
                   onChanged: (val) => themeProvider.setTheme(val!),
                   icon: Icons.wb_sunny,
+                  theme: theme,
+                ),
+                Divider(color: theme.dividerColor, height: 1),
+                _buildThemeRadio(
+                  title: 'مسائي (Midnight)',
+                  subtitle: 'مريح للعين في الظلام',
+                  value: AppThemeType.midnight,
+                  groupValue: themeProvider.currentTheme,
+                  onChanged: (val) => themeProvider.setTheme(val!),
+                  icon: Icons.nights_stay,
                   theme: theme,
                 ),
                 Divider(color: theme.dividerColor, height: 1),
@@ -135,25 +135,42 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildSectionHeader('الخصوصية', theme),
           _buildContainer(
             theme: theme,
-            child: ListTile(
-              title: Text('إدارة الصلاحيات',
-                  style: TextStyle(
-                      color: theme.textTheme.bodyLarge?.color,
-                      fontWeight: FontWeight.bold)),
-              subtitle: Text('مراجعة وتعديل صلاحيات التطبيق',
-                  style: TextStyle(
-                      color: theme.textTheme.bodyMedium?.color
-                          ?.withValues(alpha: 0.7),
-                      fontSize: 12)),
-              leading: Icon(Icons.security, color: theme.colorScheme.primary),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => const PermissionsScreen(fromSettings: true),
-                  ),
-                );
-              },
+            child: Column(
+              children: [
+                ListTile(
+                  title: Text('سجل الطوارئ',
+                      style: TextStyle(
+                          color: theme.textTheme.bodyLarge?.color,
+                          fontWeight: FontWeight.bold)),
+                  leading:
+                      Icon(Icons.history, color: theme.colorScheme.primary),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () => navProvider.navigateTo(NavigationPage.history),
+                ),
+                // Divider removed as requested
+                ListTile(
+                  title: Text('إدارة الصلاحيات',
+                      style: TextStyle(
+                          color: theme.textTheme.bodyLarge?.color,
+                          fontWeight: FontWeight.bold)),
+                  subtitle: Text('مراجعة وتعديل صلاحيات التطبيق',
+                      style: TextStyle(
+                          color: theme.textTheme.bodyMedium?.color
+                              ?.withValues(alpha: 0.7),
+                          fontSize: 12)),
+                  leading:
+                      Icon(Icons.security, color: theme.colorScheme.primary),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            const PermissionsScreen(fromSettings: true),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
 

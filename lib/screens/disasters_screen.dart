@@ -61,7 +61,8 @@ class _DisasterCard extends StatefulWidget {
   State<_DisasterCard> createState() => _DisasterCardState();
 }
 
-class _DisasterCardState extends State<_DisasterCard> with SingleTickerProviderStateMixin {
+class _DisasterCardState extends State<_DisasterCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
@@ -119,7 +120,8 @@ class _DisasterCardState extends State<_DisasterCard> with SingleTickerProviderS
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        color: widget.disaster.color.withAlpha((0.2 * 255).round()),
+                        color: widget.disaster.color
+                            .withAlpha((0.2 * 255).round()),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(

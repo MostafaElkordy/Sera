@@ -104,7 +104,8 @@ class DisasterDetailScreen extends StatelessWidget {
                         onTap: () {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('سيتم تفعيل "استخدم الكاميرا لتحليل الموقف" قريباً...'),
+                              content: Text(
+                                  'سيتم تفعيل "استخدم الكاميرا لتحليل الموقف" قريباً...'),
                               backgroundColor: Colors.teal,
                               duration: Duration(seconds: 2),
                             ),

@@ -22,6 +22,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
   bool _contactsSelected = true;
   bool _audioSelected = true;
   bool _cameraSelected = true;
+  bool _photosSelected = true; // New
   bool _selectAll = true;
 
   void _onSelectAllChanged(bool? value) {
@@ -33,6 +34,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
       _contactsSelected = value;
       _audioSelected = value;
       _cameraSelected = value;
+      _photosSelected = value;
     });
   }
 
@@ -42,7 +44,8 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
           _smsSelected &&
           _contactsSelected &&
           _audioSelected &&
-          _cameraSelected;
+          _cameraSelected &&
+          _photosSelected;
     });
   }
 
@@ -57,10 +60,24 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
     if (_audioSelected) permissionsToRequest.add(Permission.microphone);
     if (_cameraSelected) permissionsToRequest.add(Permission.camera);
 
+    // Request Photos/Storage
+    if (_photosSelected) {
+      // Requesting both handles different Android versions via permission_handler
+      permissionsToRequest.add(Permission.photos);
+      // Note: Permission.storage might be needed for older Androids,
+      // but Permission.photos usually maps intelligently or we can add both.
+      // For safety on older Androids:
+      permissionsToRequest.add(Permission.storage);
+    }
+
+    // Request Phone permission for Dual SIM / SmsManager access
+    permissionsToRequest.add(Permission.phone);
+
     // Always request notification if possible
     permissionsToRequest.add(Permission.notification);
 
     if (permissionsToRequest.isNotEmpty) {
+      // Filter out permanently denied to avoid errors, or just request all explanation
       await permissionsToRequest.request();
     }
 
@@ -94,7 +111,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFF1F2937),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -118,28 +135,9 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                 style:
                     TextStyle(fontSize: 14, color: Colors.white70, height: 1.5),
               ),
-              const SizedBox(height: 12),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.blue.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.blue.withValues(alpha: 0.3)),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.info_outline, color: Colors.blue, size: 20),
-                    SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'جميع الصلاحيات يمكنك تفعيلها أو إلغاؤها لاحقاً من إعدادات التطبيق، أو عند الحاجة إليها فقط.',
-                        style: TextStyle(fontSize: 12, color: Colors.white),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
+              // REMOVED DUPLICATE TEXT CONTAINER HERE
+
               const SizedBox(height: 20),
 
               // Select All Header
@@ -163,62 +161,66 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
               ),
               const SizedBox(height: 10),
 
-              // Permissions List
-              Expanded(
-                child: ListView(
-                  children: [
-                    _buildPermissionCheckbox(
-                      value: _locationSelected,
-                      onChanged: (v) {
-                        setState(() => _locationSelected = v!);
-                        _updateSelectAllState();
-                      },
-                      icon: Icons.location_on,
-                      title: 'تحديد الموقع',
-                      desc: 'لإرسال موقعك الدقيق للمنقذين',
-                    ),
-                    _buildPermissionCheckbox(
-                      value: _smsSelected,
-                      onChanged: (v) {
-                        setState(() => _smsSelected = v!);
-                        _updateSelectAllState();
-                      },
-                      icon: Icons.sms,
-                      title: 'الرسائل النصية',
-                      desc: 'لإرسال نداءات الاستغاثة تلقائياً',
-                    ),
-                    _buildPermissionCheckbox(
-                      value: _contactsSelected,
-                      onChanged: (v) {
-                        setState(() => _contactsSelected = v!);
-                        _updateSelectAllState();
-                      },
-                      icon: Icons.contacts,
-                      title: 'جهات الاتصال',
-                      desc: 'لاختيار أرقام الطوارئ من هاتفك',
-                    ),
-                    _buildPermissionCheckbox(
-                      value: _audioSelected,
-                      onChanged: (v) {
-                        setState(() => _audioSelected = v!);
-                        _updateSelectAllState();
-                      },
-                      icon: Icons.mic,
-                      title: 'الميكروفون',
-                      desc: 'لتسجيل الصوت كدليل أثناء الخطر',
-                    ),
-                    _buildPermissionCheckbox(
-                      value: _cameraSelected,
-                      onChanged: (v) {
-                        setState(() => _cameraSelected = v!);
-                        _updateSelectAllState();
-                      },
-                      icon: Icons.camera_alt,
-                      title: 'الكاميرا',
-                      desc: 'سيتم استخدام الكاميرا عند الضرورة لتقييم الوضع',
-                    ),
-                  ],
-                ),
+              // Permissions List - NON-SCROLLABLE (part of main scroll)
+              _buildPermissionCheckbox(
+                value: _locationSelected,
+                onChanged: (v) {
+                  setState(() => _locationSelected = v!);
+                  _updateSelectAllState();
+                },
+                icon: Icons.location_on,
+                title: 'تحديد الموقع',
+                desc: 'لإرسال موقعك الدقيق للمنقذين',
+              ),
+              _buildPermissionCheckbox(
+                value: _smsSelected,
+                onChanged: (v) {
+                  setState(() => _smsSelected = v!);
+                  _updateSelectAllState();
+                },
+                icon: Icons.sms,
+                title: 'الرسائل النصية',
+                desc: 'لإرسال نداءات الاستغاثة تلقائياً',
+              ),
+              _buildPermissionCheckbox(
+                value: _contactsSelected,
+                onChanged: (v) {
+                  setState(() => _contactsSelected = v!);
+                  _updateSelectAllState();
+                },
+                icon: Icons.contacts,
+                title: 'جهات الاتصال',
+                desc: 'لاختيار أرقام الطوارئ من هاتفك',
+              ),
+              _buildPermissionCheckbox(
+                value: _audioSelected,
+                onChanged: (v) {
+                  setState(() => _audioSelected = v!);
+                  _updateSelectAllState();
+                },
+                icon: Icons.mic,
+                title: 'الميكروفون',
+                desc: 'لتسجيل الصوت كدليل أثناء الخطر',
+              ),
+              _buildPermissionCheckbox(
+                value: _cameraSelected,
+                onChanged: (v) {
+                  setState(() => _cameraSelected = v!);
+                  _updateSelectAllState();
+                },
+                icon: Icons.camera_alt,
+                title: 'الكاميرا',
+                desc: 'سيتم استخدام الكاميرا عند الضرورة لتقييم الوضع',
+              ),
+              _buildPermissionCheckbox(
+                value: _photosSelected,
+                onChanged: (v) {
+                  setState(() => _photosSelected = v!);
+                  _updateSelectAllState();
+                },
+                icon: Icons.photo_library,
+                title: 'الصور والملفات',
+                desc: 'لاختيار صورة الملف الشخصي من المعرض',
               ),
 
               const SizedBox(height: 16),
@@ -226,26 +228,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
               // Buttons Row
               Row(
                 children: [
-                  // Skip Button
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: _isRequesting ? null : _onSkip,
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        side: const BorderSide(color: Colors.grey),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                      ),
-                      child: const Text('تخطى',
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.grey)),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-
-                  // Agree Button
+                  // Agree Button (Moved to Start)
                   Expanded(
                     flex: 2,
                     child: ElevatedButton(
@@ -268,6 +251,25 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white)),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+
+                  // Skip Button (Moved to End)
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: _isRequesting ? null : _onSkip,
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        side: const BorderSide(color: Colors.grey),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: const Text('تخطى',
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey)),
                     ),
                   ),
                 ],

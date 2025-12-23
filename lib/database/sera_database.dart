@@ -17,7 +17,7 @@ class SeraDatabase {
 
     _db = await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (db, version) async {
         await db.execute('''
           CREATE TABLE sos_history (
@@ -26,7 +26,9 @@ class SeraDatabase {
             longitude REAL,
             message TEXT,
             timestamp TEXT,
-            status TEXT
+            status TEXT,
+            evidence TEXT,
+            synced INTEGER
           )
         ''');
 
@@ -40,6 +42,19 @@ class SeraDatabase {
             medical_history TEXT
           )
         ''');
+      },
+      onUpgrade: (db, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          // Migration for v2: Add evidence and synced columns
+          try {
+            await db
+                .execute('ALTER TABLE sos_history ADD COLUMN evidence TEXT');
+          } catch (e) {/* ignore if exists */}
+          try {
+            await db
+                .execute('ALTER TABLE sos_history ADD COLUMN synced INTEGER');
+          } catch (e) {/* ignore if exists */}
+        }
       },
     );
   }
@@ -56,8 +71,8 @@ class SeraDatabase {
 
   Future<List<Map<String, dynamic>>> getSosHistory({int limit = 100}) async {
     if (_db == null) await init();
-    final rows = await _db!.query('sos_history',
-        orderBy: 'timestamp DESC', limit: limit);
+    final rows = await _db!
+        .query('sos_history', orderBy: 'timestamp DESC', limit: limit);
     return rows;
   }
 

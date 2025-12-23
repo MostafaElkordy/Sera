@@ -61,7 +61,8 @@ class _FirstAidCard extends StatefulWidget {
   State<_FirstAidCard> createState() => _FirstAidCardState();
 }
 
-class _FirstAidCardState extends State<_FirstAidCard> with SingleTickerProviderStateMixin {
+class _FirstAidCardState extends State<_FirstAidCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
@@ -100,17 +101,17 @@ class _FirstAidCardState extends State<_FirstAidCard> with SingleTickerProviderS
           return Transform.scale(
             scale: _scaleAnimation.value,
             child: Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFF374151),
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: widget.caseData.color.withAlpha((0.3 * 255).round()),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
+              decoration: BoxDecoration(
+                color: const Color(0xFF374151),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.caseData.color.withAlpha((0.3 * 255).round()),
+                    blurRadius: 8,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
@@ -119,7 +120,8 @@ class _FirstAidCardState extends State<_FirstAidCard> with SingleTickerProviderS
                     Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: widget.caseData.color.withAlpha((0.2 * 255).round()),
+                        color: widget.caseData.color
+                            .withAlpha((0.2 * 255).round()),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(

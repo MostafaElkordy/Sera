@@ -303,9 +303,8 @@ class _DebugHealthCheckScreenState extends State<DebugHealthCheckScreen> {
                       : ''),
               style: TextStyle(
                 fontSize: 14,
-                color: healthyCount == totalCount
-                    ? Colors.green
-                    : Colors.orange,
+                color:
+                    healthyCount == totalCount ? Colors.green : Colors.orange,
               ),
               textDirection: TextDirection.rtl,
               textAlign: TextAlign.center,

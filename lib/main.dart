@@ -8,16 +8,16 @@ import 'providers/navigation_provider.dart';
 import 'providers/sos_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/splash_screen.dart';
-import 'services/navigation_persistence_service.dart';
+// import 'services/navigation_persistence_service.dart';
 import 'services/offline_service.dart';
-import 'services/persistence_service.dart';
+// import 'services/persistence_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 1. Initialize Critical Services
-  await PersistenceService().init();
-  await NavigationPersistenceService().initialize();
+  // 1. Initialize Critical Services
+  // Moved to SplashScreen for parallel initialization (faster launch)
   offlineService.initialize();
 
   // 2. Lock Orientation

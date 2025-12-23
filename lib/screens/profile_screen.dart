@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_contacts/flutter_contacts.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart' as intl;
 import '../providers/navigation_provider.dart';
 import '../services/persistence_service.dart';
 
@@ -13,15 +16,37 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-
-  // No longer using a text controller for diseases, but a List
-  List<String> _selectedDiseases = [];
-
-  List<Map<String, String>> _emergencyContacts = [];
-  String _selectedBloodType = 'غير محدد';
   bool _isSaving = false;
 
+  // --- Controllers & State ---
+
+  // Tab 1: Personal
+  final _nameController = TextEditingController();
+  String? _selectedGender;
+  DateTime? _selectedDob;
+  final _weightController = TextEditingController();
+  final _heightController = TextEditingController();
+  String? _profileImagePath;
+
+  // Tab 2: Medical
+  String _selectedBloodType = 'غير محدد';
+  List<String> _selectedDiseases = [];
+  List<String> _medications = [];
+  List<String> _medicalDirectives = [];
+
+  // Doctor
+  final _doctorNameController = TextEditingController();
+  final _doctorPhoneController = TextEditingController();
+
+  // Insurance
+  String? _insuranceType;
+  final _insuranceProviderController = TextEditingController();
+  final _insurancePolicyController = TextEditingController();
+
+  // Tab 3: Contacts
+  List<Map<String, String>> _emergencyContacts = [];
+
+  // Lists
   final List<String> _bloodTypes = [
     'غير محدد',
     'A+',
@@ -45,6 +70,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
     'أخرى'
   ];
 
+  final List<String> _commonDirectives = [
+    'متبرع بالأعضاء',
+    'لا تقم بالإنعاش القلبي (DNR)',
+    'يوجد جهاز تنظيم ضربات القلب',
+    'لدي زرعة شريحة معدنية',
+    'حامل',
+    'تواصل مع الطبيب المعالج فوراً',
+    'أخرى'
+  ];
+
   @override
   void initState() {
     super.initState();
@@ -54,320 +89,203 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Future<void> _loadUserData() async {
     final data = PersistenceService().getUserData();
     final contacts = PersistenceService().getEmergencyContacts();
-    setState(() {
-      _nameController.text = data['name'] ?? '';
-      _selectedBloodType = data['bloodType'] ?? 'غير محدد';
 
-      // Load diseases from string (comma separated)
+    setState(() {
+      // Personal
+      _nameController.text = data['name'] ?? '';
+      _selectedGender = data['gender'];
+      if (data['dob'] != null && data['dob'].isNotEmpty) {
+        _selectedDob = DateTime.parse(data['dob']);
+      }
+      _weightController.text = data['weight'] ?? '';
+      _heightController.text = data['height'] ?? '';
+      _profileImagePath = data['imagePath'];
+
+      // Medical
+      _selectedBloodType = data['bloodType'] ?? 'غير محدد';
+      if (!_bloodTypes.contains(_selectedBloodType))
+        _selectedBloodType = 'غير محدد';
+
       String medicalHistory = data['medicalHistory'] ?? '';
       if (medicalHistory.isNotEmpty) {
         _selectedDiseases =
             medicalHistory.split(',').where((e) => e.isNotEmpty).toList();
       }
 
+      _medications = List<String>.from(data['medications'] ?? []);
+      _medicalDirectives = List<String>.from(data['medicalDirectives'] ?? []);
+
+      _doctorNameController.text = data['doctorName'] ?? '';
+      _doctorPhoneController.text = data['doctorPhone'] ?? '';
+
+      _insuranceType = data['insuranceType'];
+      _insuranceProviderController.text = data['insuranceProvider'] ?? '';
+      _insurancePolicyController.text = data['insurancePolicy'] ?? '';
+
+      // Contacts
       _emergencyContacts = List.from(contacts);
-      if (!_bloodTypes.contains(_selectedBloodType)) {
-        _selectedBloodType = 'غير محدد';
-      }
     });
   }
 
   Future<void> _saveProfile() async {
     if (!_formKey.currentState!.validate()) return;
-
     setState(() => _isSaving = true);
 
-    await PersistenceService().saveUserData({
-      'name': _nameController.text,
-      'bloodType': _selectedBloodType,
-      'medicalHistory': _selectedDiseases.join(','),
-    });
+    try {
+      await PersistenceService().saveUserData({
+        // Personal
+        'name': _nameController.text,
+        'gender': _selectedGender, // Logic in service must handle null
+        'dob': _selectedDob?.toIso8601String() ?? '',
+        'weight': _weightController.text,
+        'height': _heightController.text,
+        'imagePath': _profileImagePath,
 
-    await PersistenceService().setEmergencyContacts(_emergencyContacts);
+        // Medical
+        'bloodType': _selectedBloodType,
+        'medicalHistory': _selectedDiseases.join(','),
+        'medications': _medications,
+        'medicalDirectives': _medicalDirectives,
+        'doctorName': _doctorNameController.text,
+        'doctorPhone': _doctorPhoneController.text,
+        'insuranceType': _insuranceType, // Logic in service must handle null
+        'insuranceProvider': _insuranceProviderController.text,
+        'insurancePolicy': _insurancePolicyController.text,
+      });
 
-    if (!mounted) return;
+      await PersistenceService().setEmergencyContacts(_emergencyContacts);
 
-    setState(() => _isSaving = false);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-          content: Text('تم حفظ الملف الشخصي بنجاح'),
-          backgroundColor: Colors.green),
-    );
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text('تم حفظ الملف الشخصي بنجاح'),
+            backgroundColor: Colors.green),
+      );
+    } catch (e) {
+      debugPrint("Save error: $e");
+      if (!mounted) return;
+      setState(() => _isSaving = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('حدث خطأ أثناء الحفظ: $e'),
+            backgroundColor: Colors.red),
+      );
+    }
+  }
+
+  // --- Actions ---
+
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image != null) {
+      setState(() => _profileImagePath = image.path);
+    }
   }
 
   Future<void> _pickContact() async {
     try {
-      if (await FlutterContacts.requestPermission()) {
+      if (await FlutterContacts.requestPermission(readonly: true)) {
         final contact = await FlutterContacts.openExternalPick();
         if (contact != null) {
           final fullContact = await FlutterContacts.getContact(contact.id);
-
           if (fullContact != null && fullContact.phones.isNotEmpty) {
-            final name = fullContact.displayName;
-            final phone = fullContact.phones.first.number;
-
             setState(() {
               _emergencyContacts.add({
-                'name': name,
-                'phone': phone,
+                'name': fullContact.displayName,
+                'phone': fullContact.phones.first.number,
               });
             });
-          } else {
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text('جهة الاتصال المختارة لا تحتوي على رقم هاتف'),
-                    backgroundColor: Colors.orange),
-              );
-            }
           }
         }
       }
     } catch (e) {
-      debugPrint('Error picking contact: $e');
+      debugPrint("Error picking contact: $e");
     }
   }
 
-  void _showContactDialog({Map<String, String>? existingContact, int? index}) {
-    final theme = Theme.of(context);
+  // --- Logic Helpers ---
 
-    final nameCtrl =
-        TextEditingController(text: existingContact?['name'] ?? '');
-    final phoneCtrl =
-        TextEditingController(text: existingContact?['phone'] ?? '');
-    final isEditing = existingContact != null;
-
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        backgroundColor: theme.canvasColor,
-        title: Text(isEditing ? 'تعديل جهة اتصال' : 'إضافة جهة اتصال',
-            style: TextStyle(color: theme.textTheme.titleLarge?.color)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: nameCtrl,
-              style: TextStyle(color: theme.textTheme.bodyLarge?.color),
-              decoration: InputDecoration(
-                labelText: 'الاسم',
-                labelStyle: TextStyle(color: theme.hintColor),
-                enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: theme.dividerColor)),
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: phoneCtrl,
-              keyboardType: TextInputType.phone,
-              style: TextStyle(color: theme.textTheme.bodyLarge?.color),
-              decoration: InputDecoration(
-                labelText: 'رقم الهاتف',
-                labelStyle: TextStyle(color: theme.hintColor),
-                enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: theme.dividerColor)),
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('إلغاء', style: TextStyle(color: Colors.grey))),
-          ElevatedButton(
-            onPressed: () {
-              if (nameCtrl.text.isNotEmpty && phoneCtrl.text.isNotEmpty) {
-                setState(() {
-                  if (isEditing) {
-                    _emergencyContacts[index!] = {
-                      'name': nameCtrl.text,
-                      'phone': phoneCtrl.text,
-                    };
-                  } else {
-                    _emergencyContacts.add({
-                      'name': nameCtrl.text,
-                      'phone': phoneCtrl.text,
-                    });
-                  }
-                });
-                Navigator.pop(ctx);
-              }
-            },
-            child: Text(isEditing ? 'حفظ' : 'إضافة'),
-          ),
-        ],
-      ),
-    );
+  String _calculateAge(DateTime dob) {
+    final now = DateTime.now();
+    int age = now.year - dob.year;
+    if (now.month < dob.month ||
+        (now.month == dob.month && now.day < dob.day)) {
+      age--;
+    }
+    return "$age سنة";
   }
 
-  @override
-  void dispose() {
-    _nameController.dispose();
-    super.dispose();
+  void _addToList(List<String> list, String item) {
+    if (item.isNotEmpty && !list.contains(item)) {
+      setState(() => list.add(item));
+    }
+  }
+
+  void _showAddDialog(String title, Function(String) onAdd) {
+    final controller = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+              title: Text(title),
+              content: TextField(
+                  controller: controller,
+                  autofocus: true,
+                  decoration: const InputDecoration(hintText: "أدخل النص هنا")),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    child: const Text("إلغاء")),
+                ElevatedButton(
+                    onPressed: () {
+                      onAdd(controller.text);
+                      Navigator.pop(ctx);
+                    },
+                    child: const Text("إضافة")),
+              ],
+            ));
   }
 
   @override
   Widget build(BuildContext context) {
-    final navProvider = Provider.of<NavigationProvider>(context, listen: false);
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final navProvider = Provider.of<NavigationProvider>(context, listen: false);
 
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      appBar: AppBar(
-        title: Text('الملف الشخصي', style: theme.appBarTheme.titleTextStyle),
-        backgroundColor: theme.appBarTheme.backgroundColor,
-        elevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: theme.iconTheme.color),
-          onPressed: () => navProvider.goBack(),
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('الملف الشخصي'),
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => navProvider.goBack(),
+          ),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.save, color: theme.colorScheme.primary),
+              onPressed: _isSaving ? null : _saveProfile,
+            )
+          ],
+          bottom: TabBar(
+            labelColor: theme.colorScheme.primary,
+            indicatorColor: theme.colorScheme.primary,
+            unselectedLabelColor: Colors.grey,
+            tabs: const [
+              Tab(text: "بياناتي"),
+              Tab(text: "السجل الطبي"),
+              Tab(text: "جهات الاتصال"),
+            ],
+          ),
         ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.save, color: theme.colorScheme.primary),
-            onPressed: _isSaving ? null : _saveProfile,
-          )
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Form(
+        body: Form(
           key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: TabBarView(
             children: [
-              _buildSectionTitle('المعلومات الشخصية', theme),
-              const SizedBox(height: 16),
-              _buildTextField(
-                controller: _nameController,
-                label: 'الاسم الكامل',
-                icon: Icons.person,
-                theme: theme,
-              ),
-              const SizedBox(height: 24),
-              _buildSectionTitle('جهات اتصال الطوارئ', theme),
-              const SizedBox(height: 8),
-              Text(
-                'سيتم إرسال رسالة الاستغاثة لهذه الأرقام',
-                style: TextStyle(color: theme.hintColor, fontSize: 12),
-              ),
-              const SizedBox(height: 12),
-
-              // Contact List
-              if (_emergencyContacts.isEmpty)
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('لم يتم إضافة جهات اتصال بعد',
-                      style: TextStyle(color: theme.hintColor)),
-                ),
-
-              ..._emergencyContacts.asMap().entries.map((entry) {
-                final index = entry.key;
-                final contact = entry.value;
-                return Card(
-                  color: isDark ? const Color(0xFF374151) : Colors.white,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      side: BorderSide(
-                          color: theme.dividerColor.withValues(alpha: 0.1))),
-                  elevation: 2,
-                  child: ListTile(
-                    leading: CircleAvatar(
-                        backgroundColor:
-                            theme.colorScheme.primary.withValues(alpha: 0.2),
-                        child: Icon(Icons.phone,
-                            color: theme.colorScheme.primary, size: 20)),
-                    title: Text(contact['name']!,
-                        style:
-                            TextStyle(color: theme.textTheme.bodyLarge?.color)),
-                    subtitle: Text(contact['phone']!,
-                        style: TextStyle(
-                            color: theme.textTheme.bodyMedium?.color)),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        IconButton(
-                          icon: const Icon(Icons.edit, color: Colors.blue),
-                          onPressed: () => _showContactDialog(
-                              existingContact: contact, index: index),
-                        ),
-                        IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.red),
-                          onPressed: () => setState(
-                              () => _emergencyContacts.removeAt(index)),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-
-              const SizedBox(height: 12),
-              // Buttons Row
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => _showContactDialog(),
-                      icon: const Icon(Icons.add),
-                      label: const Text('إدراج يدوي'),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: _pickContact,
-                      icon: const Icon(Icons.contacts),
-                      label: const Text('من الهاتف'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.primary,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12)),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 24),
-
-              _buildSectionTitle('المعلومات الطبية', theme),
-              const SizedBox(height: 16),
-
-              // Blood Type
-              Text('فصيلة الدم',
-                  style: TextStyle(
-                      color: theme.textTheme.bodyLarge?.color,
-                      fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              _buildDropdown(
-                label: 'اختر الفصيلة',
-                value: _selectedBloodType,
-                items: _bloodTypes,
-                onChanged: (val) => setState(() => _selectedBloodType = val!),
-                icon: Icons.bloodtype,
-                theme: theme,
-              ),
-              const SizedBox(height: 16),
-
-              // Chronic Diseases Multi-select
-              Text('أمراض مزمنة أو حساسية',
-                  style: TextStyle(
-                      color: theme.textTheme.bodyLarge?.color,
-                      fontWeight: FontWeight.bold)),
-              const SizedBox(height: 8),
-              _buildDiseaseMultiSelect(theme),
-
-              const SizedBox(height: 30),
+              _buildPersonalTab(theme),
+              _buildMedicalTab(theme),
+              _buildContactsTab(theme),
             ],
           ),
         ),
@@ -375,15 +293,294 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title, ThemeData theme) {
-    return Text(
-      title,
-      style: TextStyle(
-        color: theme.colorScheme.primary,
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
+  // --- Tabs ---
+
+  Widget _buildPersonalTab(ThemeData theme) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: _pickImage,
+            child: CircleAvatar(
+              radius: 50,
+              backgroundColor: Colors.grey[200],
+              backgroundImage: _profileImagePath != null
+                  ? FileImage(File(_profileImagePath!))
+                  : null,
+              child: _profileImagePath == null
+                  ? Icon(Icons.camera_alt, size: 40, color: Colors.grey[400])
+                  : null,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Text("اضغط لتغيير الصورة",
+              style: TextStyle(color: theme.hintColor, fontSize: 12)),
+          const SizedBox(height: 24),
+          _buildTextField(
+              controller: _nameController,
+              label: 'الاسم الكامل',
+              icon: Icons.person,
+              theme: theme,
+              required: true),
+          const SizedBox(height: 16),
+          _buildDropdown(
+              label: "النوع",
+              value: _selectedGender,
+              items: ["ذكر", "أنثى"],
+              onChanged: (v) => setState(() => _selectedGender = v!),
+              icon: Icons.wc,
+              theme: theme),
+          const SizedBox(height: 16),
+          InkWell(
+            onTap: () async {
+              final picked = await showDatePicker(
+                  context: context,
+                  initialDate: DateTime(2000),
+                  firstDate: DateTime(1900),
+                  lastDate: DateTime.now());
+              if (picked != null) setState(() => _selectedDob = picked);
+            },
+            child: InputDecorator(
+              decoration: InputDecoration(
+                labelText: "تاريخ الميلاد",
+                filled: true,
+                prefixIcon: Icon(Icons.calendar_today,
+                    color: theme.colorScheme.primary),
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none),
+              ),
+              child: Text(
+                _selectedDob == null
+                    ? "اختر التاريخ"
+                    : "${intl.DateFormat('yyyy-MM-dd').format(_selectedDob!)}\n${_calculateAge(_selectedDob!)}",
+                style: TextStyle(color: theme.textTheme.bodyLarge?.color),
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                  child: _buildTextField(
+                      controller: _weightController,
+                      label: "الوزن (kg)",
+                      icon: Icons.monitor_weight,
+                      theme: theme,
+                      keyboardType: TextInputType.number)),
+              const SizedBox(width: 16),
+              Expanded(
+                  child: _buildTextField(
+                      controller: _heightController,
+                      label: "الطول (cm)",
+                      icon: Icons.height,
+                      theme: theme,
+                      keyboardType: TextInputType.number)),
+            ],
+          ),
+          const SizedBox(height: 32),
+          _buildSaveButton(theme),
+          const SizedBox(height: 20),
+        ],
       ),
     );
+  }
+
+  Widget _buildMedicalTab(ThemeData theme) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle("المعلومات الأساسية", theme),
+          const SizedBox(height: 8),
+          _buildDropdown(
+            label: 'فصيلة الدم',
+            value: _selectedBloodType,
+            items: _bloodTypes,
+            onChanged: (val) => setState(() => _selectedBloodType = val!),
+            icon: Icons.bloodtype,
+            theme: theme,
+          ),
+          const SizedBox(height: 16),
+          _buildMultiSelect(
+              title: "أمراض مزمنة أو حساسية",
+              items: _selectedDiseases,
+              options: _commonDiseases,
+              onAdd: (item) => _addToList(_selectedDiseases, item),
+              onRemove: (item) =>
+                  setState(() => _selectedDiseases.remove(item)),
+              theme: theme),
+          const SizedBox(height: 24),
+          _buildSectionTitle("الأدوية", theme),
+          _buildListEditor(
+              items: _medications,
+              placeholder: "أدخل اسم الدواء",
+              onAdd: (med) => _addToList(_medications, med),
+              onRemove: (med) => setState(() => _medications.remove(med)),
+              theme: theme),
+          const SizedBox(height: 24),
+          _buildSectionTitle("الوصايا الطبية", theme),
+          _buildMultiSelect(
+              title: "اختر وصية طبية",
+              items: _medicalDirectives,
+              options: _commonDirectives,
+              onAdd: (item) => _addToList(_medicalDirectives, item),
+              onRemove: (item) =>
+                  setState(() => _medicalDirectives.remove(item)),
+              theme: theme),
+          const SizedBox(height: 24),
+          _buildSectionTitle("الطبيب المعالج", theme),
+          _buildTextField(
+              controller: _doctorNameController,
+              label: "اسم الطبيب",
+              icon: Icons.local_hospital,
+              theme: theme),
+          const SizedBox(height: 8),
+          _buildTextField(
+              controller: _doctorPhoneController,
+              label: "رقم هاتف الطبيب",
+              icon: Icons.phone,
+              theme: theme,
+              keyboardType: TextInputType.phone),
+          const SizedBox(height: 24),
+          _buildSectionTitle("التأمين الطبي", theme),
+          _buildDropdown(
+              label: "نوع التأمين",
+              value: _insuranceType,
+              items: ["تأمين صحي حكومي", "تأمين صحي خاص"],
+              onChanged: (v) => setState(() => _insuranceType = v),
+              icon: Icons.verified_user,
+              theme: theme),
+          const SizedBox(height: 8),
+          _buildTextField(
+              controller: _insuranceProviderController,
+              label: "اسم الجهة / الشركة",
+              icon: Icons.apartment,
+              theme: theme),
+          const SizedBox(height: 8),
+          _buildTextField(
+              controller: _insurancePolicyController,
+              label: "الرقم التأميني",
+              icon: Icons.card_membership,
+              theme: theme),
+          const SizedBox(height: 32),
+          _buildSaveButton(theme),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactsTab(ThemeData theme) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: () => _showContactDialog(),
+                  icon: const Icon(Icons.add),
+                  label: const Text('إدراج يدوي'),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: _pickContact,
+                  icon: const Icon(Icons.contacts),
+                  label: const Text('جهات الاتصال'),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (_emergencyContacts.isEmpty)
+            Center(
+                child: Text("لا توجد جهات اتصال",
+                    style: TextStyle(color: theme.hintColor)))
+          else
+            ReorderableListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _emergencyContacts.length,
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  if (oldIndex < newIndex) {
+                    newIndex -= 1;
+                  }
+                  final item = _emergencyContacts.removeAt(oldIndex);
+                  _emergencyContacts.insert(newIndex, item);
+                });
+              },
+              itemBuilder: (ctx, i) {
+                final contact = _emergencyContacts[i];
+                return Card(
+                  key: ValueKey(contact['phone'] ?? "$i"), // Unique key
+                  margin: const EdgeInsets.only(bottom: 8),
+                  child: ListTile(
+                    leading:
+                        CircleAvatar(child: Text(contact['name']?[0] ?? "?")),
+                    title: Text(contact['name'] ?? ""),
+                    subtitle: Text(contact['phone'] ?? ""),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () =>
+                              setState(() => _emergencyContacts.removeAt(i)),
+                        ),
+                        const Icon(Icons.drag_handle, color: Colors.grey),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+          const SizedBox(height: 32),
+          _buildSaveButton(theme),
+          const SizedBox(height: 20),
+        ],
+      ),
+    );
+  }
+
+  // --- Widgets ---
+
+  Widget _buildSaveButton(ThemeData theme) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: _isSaving ? null : _saveProfile,
+        icon: _isSaving
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                    color: Colors.white, strokeWidth: 2))
+            : const Icon(Icons.save),
+        label: Text(_isSaving ? "جاري الحفظ..." : "حفظ التغييرات"),
+        style: ElevatedButton.styleFrom(
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12))),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title, ThemeData theme) {
+    return Text(title,
+        style: TextStyle(
+            color: theme.colorScheme.primary,
+            fontSize: 18,
+            fontWeight: FontWeight.bold));
   }
 
   Widget _buildTextField({
@@ -392,130 +589,186 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required IconData icon,
     required ThemeData theme,
     TextInputType keyboardType = TextInputType.text,
-    int maxLines = 1,
+    bool required = false,
   }) {
-    final isDark = theme.brightness == Brightness.dark;
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
-      maxLines: maxLines,
-      style: TextStyle(color: theme.textTheme.bodyLarge?.color),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: theme.hintColor),
         prefixIcon: Icon(icon, color: theme.colorScheme.primary),
         filled: true,
-        fillColor: isDark ? const Color(0xFF374151) : Colors.grey[200],
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none),
       ),
-      validator: (val) => val != null && val.isEmpty && label == 'الاسم الكامل'
-          ? 'هذا الحقل مطلوب'
-          : null,
+      validator: required ? (v) => v!.isEmpty ? "مطلوب" : null : null,
     );
   }
 
   Widget _buildDropdown({
     required String label,
-    required String value,
+    required String? value,
     required List<String> items,
     required Function(String?) onChanged,
     required IconData icon,
     required ThemeData theme,
   }) {
-    final isDark = theme.brightness == Brightness.dark;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF374151) : Colors.grey[200],
-        borderRadius: BorderRadius.circular(12),
+    return InputDecorator(
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: theme.colorScheme.primary),
+        filled: true,
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<String>(
-          value: value,
-          onChanged: onChanged,
+          value: (value != null && items.contains(value)) ? value : null,
           isExpanded: true,
-          dropdownColor: isDark ? const Color(0xFF374151) : Colors.white,
-          style:
-              TextStyle(color: theme.textTheme.bodyLarge?.color, fontSize: 16),
-          icon: Icon(Icons.arrow_drop_down, color: theme.colorScheme.primary),
-          items: items.map((String item) {
-            return DropdownMenuItem<String>(
-              value: item,
-              child: Row(
-                children: [
-                  Icon(icon, color: theme.colorScheme.primary, size: 20),
-                  const SizedBox(width: 12),
-                  Text(item),
-                ],
-              ),
-            );
-          }).toList(),
+          onChanged: onChanged,
+          items: items
+              .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+              .toList(),
         ),
       ),
     );
   }
 
-  Widget _buildDiseaseMultiSelect(ThemeData theme) {
-    final isDark = theme.brightness == Brightness.dark;
+  Widget _buildMultiSelect({
+    required String title,
+    required List<String> items,
+    required List<String> options,
+    required Function(String) onAdd,
+    required Function(String) onRemove,
+    required ThemeData theme,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Dropdown to add
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-          decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF374151) : Colors.grey[200],
-            borderRadius: BorderRadius.circular(12),
+        InputDecorator(
+          decoration: InputDecoration(
+            labelText: title,
+            filled: true,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none),
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
-              hint: Text('أضف مرض أو حساسية...',
-                  style: TextStyle(color: theme.hintColor)),
               isExpanded: true,
-              icon: Icon(Icons.add_circle_outline,
-                  color: theme.colorScheme.primary),
-              dropdownColor: isDark ? const Color(0xFF374151) : Colors.white,
+              hint: const Text("اختر لإضافة عنصر"),
+              items: options
+                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                  .toList(),
               onChanged: (val) {
-                if (val != null && !_selectedDiseases.contains(val)) {
-                  setState(() {
-                    _selectedDiseases.add(val);
-                  });
+                if (val == 'أخرى') {
+                  _showAddDialog("إضافة عنصر جديد", onAdd);
+                } else if (val != null) {
+                  onAdd(val);
                 }
               },
-              items: _commonDiseases
-                  .map((e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(e,
-                            style: TextStyle(
-                                color: theme.textTheme.bodyLarge?.color)),
-                      ))
-                  .toList(),
             ),
           ),
         ),
-        const SizedBox(height: 12),
-        // Selected Chips
+        const SizedBox(height: 8),
         Wrap(
           spacing: 8,
-          runSpacing: 4,
-          children: _selectedDiseases.map((disease) {
-            return Chip(
-              label: Text(disease, style: const TextStyle(color: Colors.white)),
-              backgroundColor: theme.colorScheme.primary,
-              deleteIcon:
-                  const Icon(Icons.close, size: 18, color: Colors.white),
-              onDeleted: () {
-                setState(() {
-                  _selectedDiseases.remove(disease);
-                });
-              },
-            );
-          }).toList(),
-        ),
+          children: items
+              .map((e) => Chip(
+                    label: Text(e),
+                    onDeleted: () => onRemove(e),
+                  ))
+              .toList(),
+        )
       ],
     );
+  }
+
+  Widget _buildListEditor({
+    required List<String> items,
+    required String placeholder,
+    required Function(String) onAdd,
+    required Function(String) onRemove,
+    required ThemeData theme,
+  }) {
+    final controller = TextEditingController();
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+                child: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                  hintText: placeholder,
+                  filled: true,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none)),
+            )),
+            IconButton(
+              icon: Icon(Icons.add_circle,
+                  color: theme.colorScheme.primary, size: 30),
+              onPressed: () {
+                onAdd(controller.text);
+                controller.clear();
+              },
+            )
+          ],
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          children: items
+              .map((e) => Chip(
+                    label: Text(e),
+                    onDeleted: () => onRemove(e),
+                  ))
+              .toList(),
+        )
+      ],
+    );
+  }
+
+  void _showContactDialog() {
+    final nameCtrl = TextEditingController();
+    final phoneCtrl = TextEditingController();
+    showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+              title: const Text("إضافة جهة اتصال"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                      controller: nameCtrl,
+                      decoration: const InputDecoration(labelText: "الاسم")),
+                  TextField(
+                      controller: phoneCtrl,
+                      decoration: const InputDecoration(labelText: "الهاتف"),
+                      keyboardType: TextInputType.phone),
+                ],
+              ),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    child: const Text("إلغاء")),
+                ElevatedButton(
+                    onPressed: () {
+                      if (nameCtrl.text.isNotEmpty &&
+                          phoneCtrl.text.isNotEmpty) {
+                        setState(() => _emergencyContacts.add(
+                            {'name': nameCtrl.text, 'phone': phoneCtrl.text}));
+                        Navigator.pop(ctx);
+                      }
+                    },
+                    child: const Text("حفظ")),
+              ],
+            ));
   }
 }

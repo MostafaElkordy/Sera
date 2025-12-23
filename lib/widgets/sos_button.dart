@@ -34,7 +34,12 @@ class _SosButtonState extends State<SosButton>
   @override
   Widget build(BuildContext context) {
     final sosProvider = Provider.of<SosProvider>(context);
-    final buttonSize = widget.size ?? ScreenUtils.w(40);
+    // Increase default size slightly if it was too small, but ScreenUtils.w(40) assumes certain scaling.
+    // Assuming w(40) is logical relative width. Let's keep existing size base to avoid breaking layout,
+    // but the new design might need to differ slightly in internal proportions.
+    final buttonSize = widget.size ??
+        ScreenUtils.w(
+            50); // Increased slightly for better visibility of inner text
     final isPressed = sosProvider.isCountingDown; // Active state
 
     return GestureDetector(
@@ -55,35 +60,57 @@ class _SosButtonState extends State<SosButton>
               height: buttonSize,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [Colors.red, Colors.red.shade700],
+                // The "Border" is actually the background container
+                gradient: const RadialGradient(
+                  colors: [
+                    Color(0xFFD32F2F), // Red 700
+                    Color(0xFFB71C1C), // Red 900
+                  ],
+                  stops: [0.6, 1.0],
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color:
-                        Colors.red.withValues(alpha: (isPressed ? 0.6 : 0.4)),
-                    // Glow reduced by half as requested
-                    blurRadius:
-                        (isPressed ? buttonSize * 0.21 : buttonSize * 0.28) / 2,
-                    spreadRadius:
-                        (isPressed ? buttonSize * 0.035 : buttonSize * 0.07) /
-                            2,
+                    color: Colors.red.withValues(alpha: isPressed ? 0.6 : 0.3),
+                    blurRadius: buttonSize * 0.3,
+                    spreadRadius: buttonSize * 0.05,
                   ),
                 ],
-                border: Border.all(
-                  color: Colors.red.shade300,
-                  width: buttonSize * 0.025,
-                ),
               ),
-              child: Center(
-                child: Text(
-                  'SOS',
-                  style: TextStyle(
-                    fontSize: buttonSize * 0.3,
-                    fontWeight: FontWeight.w900,
-                    color: Colors.white,
-                    letterSpacing: buttonSize * 0.028,
-                  ),
+              // This padding creates the visual "thickness" of the red border
+              padding: EdgeInsets.all(buttonSize * 0.18),
+              child: Container(
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white, // Inner white circle
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.touch_app_rounded,
+                      size: buttonSize * 0.32,
+                      color: const Color(0xFFC62828),
+                    ),
+                    SizedBox(height: buttonSize * 0.01),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: buttonSize * 0.03,
+                          vertical: buttonSize * 0.005),
+                      decoration: BoxDecoration(
+                        border:
+                            Border.all(color: Colors.red.shade900, width: 1),
+                        borderRadius: BorderRadius.circular(buttonSize * 0.1),
+                      ),
+                      child: Text(
+                        'Press & Hold',
+                        style: TextStyle(
+                          fontSize: buttonSize * 0.035,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFFB71C1C),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

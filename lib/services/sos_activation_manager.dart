@@ -17,12 +17,12 @@ class SosActivationResult {
   }) : timestamp = timestamp ?? DateTime.now();
 
   Map<String, dynamic> toJson() => {
-    'success': success,
-    'message': message,
-    'sos_id': sosAlert?.id,
-    'error': error,
-    'timestamp': timestamp.toIso8601String(),
-  };
+        'success': success,
+        'message': message,
+        'sos_id': sosAlert?.id,
+        'error': error,
+        'timestamp': timestamp.toIso8601String(),
+      };
 }
 
 class SosAlert {
@@ -43,13 +43,13 @@ class SosAlert {
   });
 
   Map<String, dynamic> toMap() => {
-    'id': id,
-    'latitude': latitude,
-    'longitude': longitude,
-    'message': message,
-    'timestamp': timestamp.toIso8601String(),
-    'status': status,
-  };
+        'id': id,
+        'latitude': latitude,
+        'longitude': longitude,
+        'message': message,
+        'timestamp': timestamp.toIso8601String(),
+        'status': status,
+      };
 }
 
 typedef SosActivationCallback = Future<void> Function(
@@ -181,7 +181,8 @@ class SosActivationManager {
   }
 
   // التحقق من وجود SOS نشط
-  bool hasActiveSos() => _currentAlert != null && _currentAlert!.status == 'active';
+  bool hasActiveSos() =>
+      _currentAlert != null && _currentAlert!.status == 'active';
 
   // الحصول على SOS الحالي
   SosAlert? getCurrentSos() => _currentAlert;

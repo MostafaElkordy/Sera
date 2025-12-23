@@ -14,7 +14,11 @@ rootProject.layout.buildDirectory.value(newBuildDir)
 subprojects {
     val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)
     project.layout.buildDirectory.value(newSubprojectBuildDir)
+
+    // Namespace Fix for background_sms
+    // Namespace Fix for background_sms - REMOVED
 }
+
 subprojects {
     project.evaluationDependsOn(":app")
 }

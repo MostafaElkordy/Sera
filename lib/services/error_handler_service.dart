@@ -29,11 +29,11 @@ class NetworkException extends AppException {
     Object? error,
     StackTrace? stackTrace,
   }) : super(
-    message: message,
-    code: 'NETWORK_ERROR',
-    originalError: error,
-    stackTrace: stackTrace,
-  );
+          message: message,
+          code: 'NETWORK_ERROR',
+          originalError: error,
+          stackTrace: stackTrace,
+        );
 }
 
 class LocationException extends AppException {
@@ -42,11 +42,11 @@ class LocationException extends AppException {
     Object? error,
     StackTrace? stackTrace,
   }) : super(
-    message: message,
-    code: 'LOCATION_ERROR',
-    originalError: error,
-    stackTrace: stackTrace,
-  );
+          message: message,
+          code: 'LOCATION_ERROR',
+          originalError: error,
+          stackTrace: stackTrace,
+        );
 }
 
 class SosException extends AppException {
@@ -55,11 +55,11 @@ class SosException extends AppException {
     Object? error,
     StackTrace? stackTrace,
   }) : super(
-    message: message,
-    code: 'SOS_ERROR',
-    originalError: error,
-    stackTrace: stackTrace,
-  );
+          message: message,
+          code: 'SOS_ERROR',
+          originalError: error,
+          stackTrace: stackTrace,
+        );
 }
 
 class StorageException extends AppException {
@@ -68,11 +68,11 @@ class StorageException extends AppException {
     Object? error,
     StackTrace? stackTrace,
   }) : super(
-    message: message,
-    code: 'STORAGE_ERROR',
-    originalError: error,
-    stackTrace: stackTrace,
-  );
+          message: message,
+          code: 'STORAGE_ERROR',
+          originalError: error,
+          stackTrace: stackTrace,
+        );
 }
 
 class ValidationException extends AppException {
@@ -81,11 +81,11 @@ class ValidationException extends AppException {
     Object? error,
     StackTrace? stackTrace,
   }) : super(
-    message: message,
-    code: 'VALIDATION_ERROR',
-    originalError: error,
-    stackTrace: stackTrace,
-  );
+          message: message,
+          code: 'VALIDATION_ERROR',
+          originalError: error,
+          stackTrace: stackTrace,
+        );
 }
 
 class TimeoutException extends AppException {
@@ -94,11 +94,11 @@ class TimeoutException extends AppException {
     Object? error,
     StackTrace? stackTrace,
   }) : super(
-    message: message,
-    code: 'TIMEOUT_ERROR',
-    originalError: error,
-    stackTrace: stackTrace,
-  );
+          message: message,
+          code: 'TIMEOUT_ERROR',
+          originalError: error,
+          stackTrace: stackTrace,
+        );
 }
 
 // ===== معالج الأخطاء =====
@@ -107,7 +107,7 @@ typedef ErrorCallback = Function(AppException exception);
 
 class ErrorHandler {
   static final ErrorHandler _instance = ErrorHandler._internal();
-  
+
   factory ErrorHandler() => _instance;
   ErrorHandler._internal();
 
@@ -135,7 +135,7 @@ class ErrorHandler {
     bool shouldRethrow = false,
   }) {
     final appException = _convertToAppException(exception, stackTrace);
-    
+
     // تنفيذ جميع callbacks المسجلة
     for (final callback in _errorCallbacks) {
       try {
@@ -159,7 +159,8 @@ class ErrorHandler {
     try {
       return await operation();
     } catch (error, stackTrace) {
-      handleException(error, stackTrace: stackTrace, shouldRethrow: shouldRethrow);
+      handleException(error,
+          stackTrace: stackTrace, shouldRethrow: shouldRethrow);
       return defaultValue;
     }
   }
@@ -238,11 +239,8 @@ Original Error: ${exception.originalError}
   }
 
   // تحويل الاستثناء إلى AppException
-  AppException _convertToAppException(
-    Object exception,
-    StackTrace? stackTrace,
-    [String? customMessage]
-  ) {
+  AppException _convertToAppException(Object exception, StackTrace? stackTrace,
+      [String? customMessage]) {
     if (exception is AppException) {
       return exception;
     }
