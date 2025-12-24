@@ -7,6 +7,10 @@ import 'navigation/main_navigator.dart';
 import 'providers/navigation_provider.dart';
 import 'providers/sos_provider.dart';
 import 'providers/theme_provider.dart';
+// ===== AI Providers =====
+import 'providers/ai_assistant_provider.dart';
+import 'providers/camera_analysis_provider.dart';
+// =========================
 import 'screens/splash_screen.dart';
 // import 'services/navigation_persistence_service.dart';
 import 'services/offline_service.dart';
@@ -47,6 +51,10 @@ class SeraApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (_) => ThemeProvider()..loadTheme()), // تهيئة الثيم
         ChangeNotifierProvider(create: (_) => SosProvider()), // New logic brain
+        // ===== AI Providers =====
+        ChangeNotifierProvider(create: (_) => AiAssistantProvider()),
+        ChangeNotifierProvider(create: (_) => CameraAnalysisProvider()),
+        // =========================
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

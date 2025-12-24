@@ -146,4 +146,12 @@ class AppConfig {
     'database_initialized': '🗄️ تم تهيئة قاعدة البيانات',
     'navigation_restored': '🔄 تم استرجاع حالة الملاحة',
   };
+
+  /// إعدادات الذكاء الاصطناعي (AI Config)
+  static const String geminiTextModel = 'gemini-pro';
+  static const String geminiVisionModel = 'gemini-1.5-flash';
+  static const String sttLocaleId = 'ar_SA';
+  static const String ttsLanguage = 'ar-SA';
+  static const Duration aiTimeout = Duration(seconds: 30);
+  static const Duration analysisInterval = Duration(seconds: 3);
 }

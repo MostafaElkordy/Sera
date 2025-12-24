@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/disaster_case.dart';
 import '../providers/navigation_provider.dart';
+import 'ai/camera_analysis_screen.dart';
 
 class DisasterDetailScreen extends StatelessWidget {
   final DisasterCase disasterData;
@@ -102,12 +103,13 @@ class DisasterDetailScreen extends StatelessWidget {
                       color: Colors.transparent,
                       child: InkWell(
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                  'سيتم تفعيل "استخدم الكاميرا لتحليل الموقف" قريباً...'),
-                              backgroundColor: Colors.teal,
-                              duration: Duration(seconds: 2),
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => CameraAnalysisScreen(
+                                disasterType: disasterData.title,
+                                disasterTitle: 'تحليل: ${disasterData.title}',
+                              ),
                             ),
                           );
                         },

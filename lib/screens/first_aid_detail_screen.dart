@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../models/first_aid_case.dart';
 import '../providers/navigation_provider.dart';
+import 'ai/ai_voice_assistant_screen.dart';
 
 class FirstAidDetailScreen extends StatelessWidget {
   final FirstAidCase caseData;
@@ -82,58 +83,71 @@ class FirstAidDetailScreen extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   // AI Assistant Card
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF374151),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: Colors.blue.withAlpha((0.3 * 255).round()),
-                        width: 2,
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AiVoiceAssistantScreen(
+                            emergencyType: caseData.title,
+                            emergencyTitle: 'مساعد: ${caseData.title}',
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF374151),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.blue.withAlpha((0.3 * 255).round()),
+                          width: 2,
+                        ),
                       ),
-                    ),
-                    child: Column(
-                      children: [
-                        const Text(
-                          'تفاعل مع المساعد الذكي',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                      child: Column(
+                        children: [
+                          const Text(
+                            'تفاعل مع المساعد الذكي',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 16),
-                        Container(
-                          width: 80,
-                          height: 80,
-                          decoration: BoxDecoration(
-                            color: Colors.blue,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color:
-                                    Colors.blue.withAlpha((0.5 * 255).round()),
-                                blurRadius: 20,
-                                spreadRadius: 2,
-                              ),
-                            ],
+                          const SizedBox(height: 16),
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.blue
+                                      .withAlpha((0.5 * 255).round()),
+                                  blurRadius: 20,
+                                  spreadRadius: 2,
+                                ),
+                              ],
+                            ),
+                            child: const Icon(
+                              Icons.mic,
+                              size: 40,
+                              color: Colors.white,
+                            ),
                           ),
-                          child: const Icon(
-                            Icons.mic,
-                            size: 40,
-                            color: Colors.white,
+                          const SizedBox(height: 12),
+                          Text(
+                            'اضغط لتفعيل المساعد الصوتي',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[400],
+                            ),
+                            textAlign: TextAlign.center,
                           ),
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          'اضغط واسأل: "ماذا أفعل الآن؟"',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey[400],
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],
