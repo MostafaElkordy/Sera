@@ -69,18 +69,32 @@ class GeminiService {
 
         // Find best text model
         String? bestTextModel;
+        String? bestVisionModel;
 
-        // First pass: Prefer 1.5 Flash
+        // Priority 1: Gemma 3 27b (High Quota: 14.4k/day)
         for (var m in models) {
           final name = m['name'].toString().replaceFirst('models/', '');
-          if (name.contains('1.5-flash') &&
+          if (name == 'gemma-3-27b' &&
               m['supportedGenerationMethods'].contains('generateContent')) {
             bestTextModel = name;
+            debugPrint('🎯 Found preferred High-Quota model: $name');
             break;
           }
         }
 
-        // Second pass: Any Gemini Pro or similar
+        // Priority 2: Gemini 1.5 Flash (1.5k/day)
+        if (bestTextModel == null) {
+          for (var m in models) {
+            final name = m['name'].toString().replaceFirst('models/', '');
+            if (name.contains('1.5-flash') &&
+                m['supportedGenerationMethods'].contains('generateContent')) {
+              bestTextModel = name;
+              break;
+            }
+          }
+        }
+
+        // Priority 3: Fallback to any 'gemini'
         if (bestTextModel == null) {
           for (var m in models) {
             final name = m['name'].toString().replaceFirst('models/', '');
@@ -92,12 +106,27 @@ class GeminiService {
           }
         }
 
+        // --- Find Best Vision Model ---
+        // Prefer explicit vision models or current flash
+        for (var m in models) {
+          final name = m['name'].toString().replaceFirst('models/', '');
+          if ((name.contains('vision') || name.contains('1.5-flash')) &&
+              m['supportedGenerationMethods'].contains('generateContent')) {
+            bestVisionModel = name;
+            break;
+          }
+        }
+        // Fallback vision
+        bestVisionModel ??= bestTextModel;
+
         if (bestTextModel != null) {
-          debugPrint('✅ Auto-selected model: $bestTextModel');
+          debugPrint('✅ Selected Text Model: $bestTextModel');
+          debugPrint('✅ Selected Vision Model: $bestVisionModel');
           _model = GenerativeModel(model: bestTextModel, apiKey: _apiKey);
-          _visionModel = GenerativeModel(model: bestTextModel, apiKey: _apiKey);
+          _visionModel =
+              GenerativeModel(model: bestVisionModel!, apiKey: _apiKey);
         } else {
-          debugPrint('⚠️ No specific gemini model found in list');
+          debugPrint('⚠️ No specific valid model found in list');
         }
       }
     } catch (e) {
