@@ -6,7 +6,6 @@ import '../providers/navigation_provider.dart';
 import '../screens/permissions_screen.dart';
 import '../utils/screen_utils.dart';
 import '../services/persistence_service.dart';
-import '../services/navigation_persistence_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -79,7 +78,6 @@ class _SplashScreenState extends State<SplashScreen>
     // 2. Initialize Critical Services (Parallel)
     final servicesInit = Future.wait([
       PersistenceService().init(),
-      NavigationPersistenceService().initialize(),
     ]);
 
     // Wait for BOTH to complete (Safety First)

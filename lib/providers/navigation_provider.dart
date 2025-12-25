@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/first_aid_case.dart';
 import '../models/disaster_case.dart';
-import '../services/navigation_persistence_service.dart';
+import '../services/persistence_service.dart';
 
 enum NavigationPage {
   home,
@@ -18,8 +18,7 @@ class NavigationProvider extends ChangeNotifier {
   final List<NavigationPage> _pageStack = [NavigationPage.home];
   FirstAidCase? selectedFirstAidCase;
   DisasterCase? selectedDisaster;
-  final NavigationPersistenceService _persistenceService =
-      NavigationPersistenceService();
+  final PersistenceService _persistenceService = PersistenceService();
   static const int _maxStackDepth = 20;
 
   NavigationProvider() {
@@ -28,7 +27,7 @@ class NavigationProvider extends ChangeNotifier {
 
   Future<void> _restoreState() async {
     if (!_persistenceService.isInitialized()) {
-      await _persistenceService.initialize();
+      await _persistenceService.init();
     }
 
     final stackStrings = _persistenceService.loadNavigationStack();
