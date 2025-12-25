@@ -12,9 +12,7 @@ import 'providers/ai_assistant_provider.dart';
 import 'providers/camera_analysis_provider.dart';
 // =========================
 import 'screens/splash_screen.dart';
-// import 'services/navigation_persistence_service.dart';
 import 'services/offline_service.dart';
-// import 'services/persistence_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
