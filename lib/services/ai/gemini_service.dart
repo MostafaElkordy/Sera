@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 import 'package:google_generative_ai/google_generative_ai.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 
 /// Gemini AI Service for SERA App
@@ -34,14 +35,18 @@ class GeminiService {
     }
 
     try {
+      final secureClient = SecureHttpClient();
+
       _model = GenerativeModel(
-        model: 'gemini-pro',
+        model: 'gemini-1.5-flash',
         apiKey: _apiKey,
+        httpClient: secureClient,
       );
 
       _visionModel = GenerativeModel(
         model: 'gemini-pro-vision',
         apiKey: _apiKey,
+        httpClient: secureClient,
       );
 
       _isInitialized = true;
@@ -57,14 +62,14 @@ class GeminiService {
   Future<void> _configureBestAvailableModel() async {
     try {
       debugPrint('🔍 Auto-discovering best Gemini model...');
-      final client = HttpClient();
-      final request = await client.getUrl(Uri.parse(
+      debugPrint('🔍 Auto-discovering best Gemini model...');
+
+      final client = SecureHttpClient();
+      final response = await client.get(Uri.parse(
           'https://generativelanguage.googleapis.com/v1beta/models?key=$_apiKey'));
-      final response = await request.close();
 
       if (response.statusCode == 200) {
-        final responseBody = await response.transform(utf8.decoder).join();
-        final jsonData = jsonDecode(responseBody);
+        final jsonData = jsonDecode(response.body);
         final models = jsonData['models'] as List;
 
         // Find best text model
@@ -366,5 +371,29 @@ ${context != null ? 'معلومات إضافية: $context' : ''}
 
     return offlineGuidance[emergencyType] ??
         'اتصل بالإسعاف فوراً على 997 واتبع تعليمات المسعفين.';
+  }
+}
+
+/// A Secure HTTP Client that injects Android-specific headers
+/// to satisfy Google API Key "Application Restrictions".
+class SecureHttpClient extends http.BaseClient {
+  final http.Client _inner = http.Client();
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) {
+    // Inject headers required for Android API Key Restriction
+    if (request.url.host == 'generativelanguage.googleapis.com') {
+      debugPrint(
+          '🔒 SecureHttpClient: Injecting Android Headers for ${request.url}');
+      request.headers['X-Android-Package'] = 'com.salma.sera';
+      // SHA-1 Fingerprint (Must match the one in Google Cloud Console)
+      request.headers['X-Android-Cert'] =
+          '4d726f68ab80466447c5c1980f58a286d46bd3ca';
+
+      debugPrint('   Headers: ${request.headers}');
+    } else {
+      debugPrint('⚠️ SecureHttpClient: Host mismatch! ${request.url.host}');
+    }
+    return _inner.send(request);
   }
 }

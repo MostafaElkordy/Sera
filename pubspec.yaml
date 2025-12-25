@@ -39,6 +39,7 @@ dependencies:
   speech_to_text: ^7.0.0 # Voice recognition
   flutter_tts: ^4.0.2 # Text to speech
   image: ^4.1.3 # Image processing
+  http: ^1.6.0
 
 dev_dependencies:
   flutter_test:

@@ -49,3 +49,12 @@ docs/ai_reports/
 *.ai_report.md
 AI_QUICKSTART.md
 TESTING_GUIDE.md
+
+# Security - Extra Protection (NEVER commit keys)
+*.env
+.env.*
+*secret*
+*api_key*
+key_output.txt
+*.pem
+*.key
