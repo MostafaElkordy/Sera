@@ -60,4 +60,5 @@ key_output.txt
 *.pem
 *.key
 docs/
+
 AGENT_RULES.md
