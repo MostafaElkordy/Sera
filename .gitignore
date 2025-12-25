@@ -59,3 +59,4 @@ AGENT_RULES.md
 key_output.txt
 *.pem
 *.key
+docs/
