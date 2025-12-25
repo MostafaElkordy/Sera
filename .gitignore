@@ -49,7 +49,7 @@ docs/ai_reports/
 *.ai_report.md
 AI_QUICKSTART.md
 TESTING_GUIDE.md
-AGENT_RULES.md
+
 
 # Security - Extra Protection (NEVER commit keys)
 *.env
@@ -60,3 +60,4 @@ key_output.txt
 *.pem
 *.key
 docs/
+AGENT_RULES.md
